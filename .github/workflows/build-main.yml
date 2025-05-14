@@ -44,11 +44,11 @@ jobs:
         if: ${{env.ENABLE_DEPENDENCIES_SCAN=='true'}}
         run: mvn clean verify -DskipTests -Pcve
 
-#      - name: Unit Tests
-#        run: mvn test -Put
-#
-#      - name: Integration Tests
-#        run: mvn test -Pit
+      #      - name: Unit Tests
+      #        run: mvn test -Put
+      #
+      #      - name: Integration Tests
+      #        run: mvn test -Pit
 
       - name: Tests
         run: mvn test -Put -Pit
@@ -90,11 +90,11 @@ jobs:
           IFS='.' read -r MAJOR MINOR <<< "$VERSION"
           
           if [ "$MINOR" -lt 99 ]; then
-            NEW_MINOR=$((MINOR + 1))
-            NEW_MAJOR=$MAJOR
+          NEW_MINOR=$((MINOR + 1))
+          NEW_MAJOR=$MAJOR
           else
-            NEW_MINOR=0
-            NEW_MAJOR=$((MAJOR + 1))
+          NEW_MINOR=0
+          NEW_MAJOR=$((MAJOR + 1))
           fi
           
           NEW_VERSION="$NEW_MAJOR.$NEW_MINOR"
@@ -103,28 +103,30 @@ jobs:
           echo "$NEW_VERSION" > version.txt
           echo "VERSION=$NEW_VERSION" >> $GITHUB_OUTPUT
 
-#      - name: "Commit new version.txt"
-#        run: |
-#          git config --global user.email "ci@ept.sn"
-#          git config --global user.name "DevSecsOps"
-#          git add version.txt
-#          git commit -m "Increment version to ${{ steps.versioning.outputs.VERSION }}"
-#          git push origin main
+      - name: "Commit new version.txt"
+        if: 1 > 2
+        run: |
+          git config --global user.email "ci@ept.sn"
+          git config --global user.name "DevSecsOps"
+          git add version.txt
+          git commit -m "Increment version to ${{ steps.versioning.outputs.VERSION }}"
+          git push origin main
 
-#      - name: "Create Git tag"
-#        run: |
-#          git tag v${{ steps.versioning.outputs.VERSION }}
-#          git push origin v${{ steps.versioning.outputs.VERSION }}
+      - name: "Create Git tag"
+        if: 1 > 2
+        run: |
+          git tag v${{ steps.versioning.outputs.VERSION }}
+          git push origin v${{ steps.versioning.outputs.VERSION }}
 
       - name: "Dockerize"
         if: ${{env.ENABLE_DOCKER_BUILD_AND_PUSH_IMAGE=='true'}}
         run: |
-          docker login -u=${{secrets.DOCKER_USERNAME }} -p=${{ secrets.DOCKER_PASSWORD }}
-          docker build -t ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:${{ github.sha }}  -t ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:${{steps.versioning.outputs.VERSION}} -t  ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:latest .        
-#          docker push ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:${{ github.sha }}
-#          docker push ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:${{steps.versioning.outputs.VERSION}}
-#          docker push ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:latest .
-          for tag in ${{ github.sha }} ${{steps.versioning.outputs.VERSION}} latest; do docker push ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:$tag; done
+               docker login -u=${{secrets.DOCKER_USERNAME }} -p=${{ secrets.DOCKER_PASSWORD }}
+               docker build -t ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:${{ github.sha }}  -t ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:${{steps.versioning.outputs.VERSION}} -t  ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:latest .        
+          #          docker push ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:${{ github.sha }}
+          #          docker push ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:${{steps.versioning.outputs.VERSION}}
+          #          docker push ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:latest .
+               for tag in ${{ github.sha }} ${{steps.versioning.outputs.VERSION}} latest; do docker push ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:$tag; done
 
       - name: "Deploy"
         env:
