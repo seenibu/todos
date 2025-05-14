@@ -30,13 +30,20 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      - name: Build and analyze
+#
+#      - name: Build and analyze
+#        env:
+#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=seenibu_todos
+
+
+      - name:  "Quality Gate"
+        uses: sonarsource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=seenibu_todos
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
-      - name: "Check Quality Gate"
-#        if: ${{env.ENABLE_SONAR_CHECK_SCAN=='true'}}
+      - name: "Check Quality Gate" #can also use simple or double quotes
         id: sonarqube-quality-gate-check
         uses: sonarsource/sonarqube-quality-gate-action@master
         timeout-minutes: 5
