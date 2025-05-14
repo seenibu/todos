@@ -1,0 +1,14 @@
+# default credentials: admin,admin
+#changed #@Admin221#@
+# This configuration is intended for development purpose
+version: '2'
+services:
+  sonar:
+    container_name: sonarqube
+    image: sonarqube:25.3.0.104237-community
+#    environment:
+#      - SONAR_FORCEAUTHENTICATION=false
+    ports:
+      - 9001:9000
+      - 9000:9000
+

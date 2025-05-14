@@ -1,0 +1,49 @@
+#PIPELINE NAME see doc at https://docs.github.com/en/actions
+name: Pull Request
+
+#CONDITION THAT SHOULD TRIGGER PIPELINE EXECUTION
+on:
+  pull_request:
+
+#JOBS OF THE PIPELINE
+jobs:
+  pull_request:
+
+    #JIN WHAT ENV
+    runs-on: ubuntu-latest
+    #possibility to run in many env >>> runs-on: [ubuntu-latest, macOS-latest, windows-latest]
+    #if: 1 > 2 # you should uncomment this line once inside your own branch
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Java
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Dependencies Scan
+      run: mvn clean verify -DskipTests -Pcve
+
+    - name: Unit Tests
+      run: mvn test -Put
+
+    - name: Integration Tests
+      run: mvn test -Pit
+
+    - name:  Quality Gate
+      if: 1 > 2
+      uses: sonarsource/sonarqube-scan-action@master
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+    
+
+    - name: "Check Quality Gate" #can also use simple or double quotes
+      if: 1 > 2
+      id: sonarqube-quality-gate-check
+      uses: sonarsource/sonarqube-quality-gate-action@master
+      timeout-minutes: 5
+      env:
+       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+       SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}

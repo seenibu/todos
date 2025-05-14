@@ -1,0 +1,12 @@
+version: '2'
+services:
+  app-service-postgres:
+    extends:
+      file: postgres.yml
+      service: service-postgres
+  app-service-sonar:
+    extends:
+      file: sonar.yml
+      service: service-sonar
+    depends_on:
+      - postgres
