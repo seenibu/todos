@@ -54,13 +54,10 @@ jobs:
           key: dependency-check-db-${{ runner.os }}
 
       - name: Dependencies Scan
+        if: ${{env.ENABLE_DEPENDENCIES_SCAN=='true'}}
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
         run: mvn org.owasp:dependency-check-maven:check -Pcve -Ddata.directory=~/.dependency-check -Dnvd.api.key=${{ secrets.NVD_API_KEY }}
-
-#      - name: Dependencies Scan
-      #        if: ${{env.ENABLE_DEPENDENCIES_SCAN=='true'}}
-      #        run:
 
       - name: Tests
         if: ${{env.ENABLE_TESTS=='true'}}
