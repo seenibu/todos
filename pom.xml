@@ -40,7 +40,7 @@
         <sonar.token>03ef89fd837b3d65294f134feac4a2a2e51ddb06</sonar.token>
         <sonar.java.binaries>target/classes</sonar.java.binaries>
 
-        <sonar.exclusions>
+        <sonar-ignore>
             **/*.xml,\
             src/main/java/sn/ept/git/seminaire/cicd/TodoApplication.java,\
             src/main/java/sn/ept/git/seminaire/cicd/demo/**.java,\
@@ -50,7 +50,10 @@
             src/main/java/sn/ept/git/seminaire/cicd/exceptions/**.java,\
             src/main/java/sn/ept/git/seminaire/cicd/dto/**.java,\
             src/main/java/sn/ept/git/seminaire/cicd/mappers/**.java,\
-        </sonar.exclusions>
+        </sonar-ignore>
+        <sonar.exclusions>${sonar-ignore}</sonar.exclusions>
+        <sonar.coverage.exclusions>${sonar.exclusions}</sonar.coverage.exclusions>
+
         <groovy-xml.version>4.0.12</groovy-xml.version>
         <rest-assured.version>5.2.1</rest-assured.version>
         <jacoco.version>0.8.11</jacoco.version>
@@ -60,6 +63,7 @@
         <maven-surefire-plugin.argLine>-Xshare:off</maven-surefire-plugin.argLine>
 
         <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
+
     </properties>
     <dependencyManagement>
         <dependencies>

@@ -23,7 +23,7 @@ public class Calculator implements ICalculator {
 
     @Override
     public double divide(double a, double b) throws DivisionByZeroException {
-        if(0==b){
+        if(Double.compare(b,0)==0){
             throw new DivisionByZeroException(DIVIDE_BY_ZERO);
         }
         return a/b;
