@@ -38,6 +38,7 @@
 <!--        <sonar.host.url>http://localhost:9000</sonar.host.url>-->
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.token>03ef89fd837b3d65294f134feac4a2a2e51ddb06</sonar.token>
+        <sonar.java.binaries>target/classes</sonar.java.binaries>
 
         <sonar.exclusions>
             **/*.xml,\
