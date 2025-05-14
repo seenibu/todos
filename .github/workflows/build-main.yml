@@ -20,7 +20,7 @@ jobs:
       ENABLE_PACKAGE: false
       ENABLE_INCREMENT_VERSION: true
       ENABLE_COMMIT_INCREMENT_VERSION: true
-      ENABLE_PUSH_TAG: false
+      ENABLE_PUSH_TAG: true
 
     steps:
       - uses: actions/checkout@v3
@@ -118,8 +118,8 @@ jobs:
       - name: "Commit new version.txt"
         if: ${{env.ENABLE_COMMIT_INCREMENT_VERSION=='true'}}
         run: |
-          git config --global user.email "ci@ept.sn"
-          git config --global user.name "DevSecsOps"
+          git config --global user.email "github-actions[bot]"
+          git config --global user.name "github-actions[bot]@users.noreply.github.com"
           git add version.txt
           git commit -m "Increment version to ${{ steps.versioning.outputs.VERSION }}"
           git push 
