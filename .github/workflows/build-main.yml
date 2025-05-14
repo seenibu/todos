@@ -80,28 +80,28 @@ jobs:
       - name: Package
         run: mvn -B package  -DskipTests=true
 
-      - name: "Read and increment version"
-        id: versioning
-        run: |
-          VERSION=$(cat version.txt)
-          echo "Current version: $VERSION"
-          
-          # Split version: major.minor
-          IFS='.' read -r MAJOR MINOR <<< "$VERSION"
-          
-          if [ "$MINOR" -lt 99 ]; then
-          NEW_MINOR=$((MINOR + 1))
-          NEW_MAJOR=$MAJOR
-          else
-          NEW_MINOR=0
-          NEW_MAJOR=$((MAJOR + 1))
-          fi
-          
-          NEW_VERSION="$NEW_MAJOR.$NEW_MINOR"
-          
-          echo "New version: $NEW_VERSION"
-          echo "$NEW_VERSION" > version.txt
-          echo "VERSION=$NEW_VERSION" >> $GITHUB_OUTPUT
+#      - name: "Read and increment version"
+#        id: versioning
+#        run: |
+#          VERSION=$(cat version.txt)
+#          echo "Current version: $VERSION"
+#
+#          # Split version: major.minor
+#          IFS='.' read -r MAJOR MINOR <<< "$VERSION"
+#
+#          if [ "$MINOR" -lt 99 ]; then
+#          NEW_MINOR=$((MINOR + 1))
+#          NEW_MAJOR=$MAJOR
+#          else
+#          NEW_MINOR=0
+#          NEW_MAJOR=$((MAJOR + 1))
+#          fi
+#
+#          NEW_VERSION="$NEW_MAJOR.$NEW_MINOR"
+#
+#          echo "New version: $NEW_VERSION"
+#          echo "$NEW_VERSION" > version.txt
+#          echo "VERSION=$NEW_VERSION" >> $GITHUB_OUTPUT
 
       - name: "Dockerized"
         if: ${{env.ENABLE_DOCKER_BUILD_AND_PUSH_IMAGE=='true'}}
