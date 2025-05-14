@@ -2,7 +2,7 @@ name: Build Main Brachn
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "xxxxmain" ]
 
 jobs:
   build:
@@ -87,11 +87,11 @@ jobs:
             exit 1
           fi
 
-      - name: "Package"
+      - name: Package
         if: ${{env.ENABLE_PACKAGE=='true'}}
         run: mvn -B package  -DskipTests=true
 
-      - name: "Release - increment version"
+      - name: "Read and increment version"
         if: ${{env.ENABLE_INCREMENT_VERSION=='true'}}
         id: versioning
         run: |
@@ -115,7 +115,7 @@ jobs:
           echo "$NEW_VERSION" > version.txt
           echo "VERSION=$NEW_VERSION" >> $GITHUB_OUTPUT
 
-      - name: "Release - Commit changes"
+      - name: "Commit new version.txt"
         if: ${{env.ENABLE_COMMIT_INCREMENT_VERSION=='true'}}
         run: |
           git config --global user.email "github-actions[bot]"
@@ -124,17 +124,18 @@ jobs:
           git commit -m "Increment version to ${{ steps.versioning.outputs.VERSION }}"
           git push 
 
-      - name: "Release - Push tag"
+      - name: "Create Git tag"
         if: ${{env.ENABLE_PUSH_TAG=='true'}}
         run: |
           git tag v${{ steps.versioning.outputs.VERSION }}
           git push origin v${{ steps.versioning.outputs.VERSION }}
 
-      - name: "Deodorization"
+      - name: "Dockerize"
         if: ${{env.ENABLE_DOCKER_BUILD_AND_PUSH_IMAGE=='true'}}
         run: |
           docker login -u=${{secrets.DOCKER_USERNAME }} -p=${{ secrets.DOCKER_PASSWORD }}
-          docker build -t ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:${{steps.versioning.outputs.VERSION}} -t ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:latest .        
+          docker build -t ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:${{ github.sha }}  -t ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:${{steps.versioning.outputs.VERSION}} -t  ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:latest .        
+          docker push ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:${{ github.sha }}
           docker push ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:${{steps.versioning.outputs.VERSION}}
           docker push ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:latest 
 
