@@ -29,13 +29,15 @@
         <jacoco.path>${project.basedir}/target/site/jacoco</jacoco.path>
         <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 
+        <sonar.organization>ept-git</sonar.organization>
         <sonar.language>java</sonar.language>
-        <sonar.projectKey>sn.ept.git.seminaire.cicd.todos</sonar.projectKey>
+<!--        <sonar.projectKey>sn.ept.git.seminaire.cicd.todos</sonar.projectKey>-->
+        <sonar.projectKey>todos</sonar.projectKey>
         <sonar.projectName>TODOS</sonar.projectName>
         <sonar.projectVersion>${project.version}</sonar.projectVersion>
-        <sonar.host.url>http://localhost:9000</sonar.host.url>
-<!--                ne doit pas etre laisser en clair-->
-        <sonar.token>sqa_7691e21c2000551315a6ac9cbb01f1b3802f04ab</sonar.token>
+<!--        <sonar.host.url>http://localhost:9000</sonar.host.url>-->
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.token>03ef89fd837b3d65294f134feac4a2a2e51ddb06</sonar.token>
 
         <sonar.exclusions>
             **/*.xml,\

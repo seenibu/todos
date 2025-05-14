@@ -2,7 +2,7 @@ name: Build Main Brachn
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "__main" ]
 
 jobs:
   build:
