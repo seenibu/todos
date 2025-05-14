@@ -41,13 +41,14 @@
 
         <sonar.exclusions>
             **/*.xml,\
-            **/TodoApplication.java,\
-            **/demo/**.java,\
-            **/entities/**.java,\
-            **/utils/**.java,\
-            **/models/**.java,\
-            **/exceptions/**.java,\
-            **/dto/**.java,\
+            src/main/java/sn/ept/git/seminaire/cicd/TodoApplication.java,\
+            src/main/java/sn/ept/git/seminaire/cicd/demo/**.java,\
+            src/main/java/sn/ept/git/seminaire/cicd/entities/**.java,\
+            src/main/java/sn/ept/git/seminaire/cicd/utils/**.java,\
+            src/main/java/sn/ept/git/seminaire/cicd/models/**.java,\
+            src/main/java/sn/ept/git/seminaire/cicd/exceptions/**.java,\
+            src/main/java/sn/ept/git/seminaire/cicd/dto/**.java,\
+            src/main/java/sn/ept/git/seminaire/cicd/mappers/**.java,\
         </sonar.exclusions>
         <groovy-xml.version>4.0.12</groovy-xml.version>
         <rest-assured.version>5.2.1</rest-assured.version>
