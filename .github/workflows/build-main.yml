@@ -84,8 +84,8 @@ jobs:
         if: ${{env.ENABLE_DOCKER_BUILD_AND_PUSH_IMAGE=='true'}}
         run: |
           docker login -u=${{secrets.DOCKER_USERNAME }} -p=${{ secrets.DOCKER_PASSWORD }}
-          docker build -t ${{secrets.DOCKER_REGISTRY_IMAGE }}:${{ github.sha }} -t  ${{secrets.DOCKER_REGISTRY_IMAGE }}:latest .        
-          docker push ${{secrets.DOCKER_REGISTRY_IMAGE }} 
+          docker build -t ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:${{ github.sha }} -t  ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:latest .        
+          docker push ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }} 
 
 
       - name: "Deploy"
