@@ -80,14 +80,34 @@ jobs:
       - name: Package
         run: mvn -B package  -DskipTests=true
 
+
+      - name: Read and increment version
+        id: versioning
+        run: |
+          VERSION=$(cat version.txt)
+          echo "Current version: $VERSION"
+          
+          # Split version: major.minor
+          IFS='.' read -r MAJOR MINOR <<< "$VERSION"
+          NEW_MINOR=$((MINOR + 1))
+          NEW_VERSION="$MAJOR.$NEW_MINOR"
+          
+          echo "$NEW_VERSION" > version.txt
+          echo "VERSION=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Commit new version.txt
+        run: |
+          git add version.txt
+          git commit -m "chore: bump version to ${{ steps.versioning.outputs.VERSION }}"
+          git push
+
       - name: Dockerize
         if: ${{env.ENABLE_DOCKER_BUILD_AND_PUSH_IMAGE=='true'}}
         run: |
           docker login -u=${{secrets.DOCKER_USERNAME }} -p=${{ secrets.DOCKER_PASSWORD }}
-          docker build -t ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:${{ github.sha }} -t  ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:latest .        
+          docker build -t ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:${{ github.sha }}  -t ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:${{steps.versioning.outputs.VERSION}} -t  ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:latest .        
           docker push ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }} 
-          docker pull ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:latest
-          docker run -p 8080:8080 --name instance_todos ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:latest #just test
+
       - name: "Deploy"
         env:
           MY_ENV_VAR: value
