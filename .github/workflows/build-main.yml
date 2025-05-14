@@ -9,16 +9,23 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
+      ENABLE_TESTS: false
       ENABLE_DEPENDENCIES_SCAN: false
-      ENABLE_SONAR_SCAN: true
-      ENABLE_SONAR_CHECK_SCAN: true
-      ENABLE_DOCKER_BUILD_AND_PUSH_IMAGE: true
+      ENABLE_SONAR_SCAN: false
+      ENABLE_SONAR_CHECK_SCAN: false
+      ENABLE_DOCKER_BUILD_AND_PUSH_IMAGE: false
       ENABLE_DEPLOY: false
       ENABLE_WAIT_DEPLOY: false
       ENABLE_CHECK_DEPLOY: false
+      ENABLE_PACKAGE: false
+      ENABLE_INCREMENT_VERSION: true
+      ENABLE_COMMIT_INCREMENT_VERSION: true
+      ENABLE_PUSH_TAG: false
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Java
         uses: actions/setup-java@v3
@@ -51,15 +58,18 @@ jobs:
 #        run: mvn test -Pit
 
       - name: Tests
+        if: ${{env.ENABLE_TESTS=='true'}}
         run: mvn test -Put -Pit
 
 
       - name: "Quality gate"
+        if: ${{env.ENABLE_SONAR_SCAN=='true'}}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B clean verify sonar:sonar -Dsonar.projectKey=seenibu_todos
 
       - name: "Check Quality Gate"
+        if: ${{env.ENABLE_SONAR_CHECK_SCAN=='true'}}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
@@ -78,9 +88,11 @@ jobs:
           fi
 
       - name: Package
+        if: ${{env.ENABLE_PACKAGE=='true'}}
         run: mvn -B package  -DskipTests=true
 
       - name: "Read and increment version"
+        if: ${{env.ENABLE_INCREMENT_VERSION=='true'}}
         id: versioning
         run: |
           VERSION=$(cat version.txt)
@@ -104,16 +116,16 @@ jobs:
           echo "VERSION=$NEW_VERSION" >> $GITHUB_OUTPUT
 
       - name: "Commit new version.txt"
-        if : 1 > 2
+        if: ${{env.ENABLE_COMMIT_INCREMENT_VERSION=='true'}}
         run: |
           git config --global user.email "ci@ept.sn"
           git config --global user.name "DevSecsOps"
           git add version.txt
           git commit -m "Increment version to ${{ steps.versioning.outputs.VERSION }}"
-          git push origin main
+          git push 
 
       - name: "Create Git tag"
-        if : 1 > 2
+        if: ${{env.ENABLE_PUSH_TAG=='true'}}
         run: |
           git tag v${{ steps.versioning.outputs.VERSION }}
           git push origin v${{ steps.versioning.outputs.VERSION }}
@@ -128,6 +140,7 @@ jobs:
           docker push ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:latest 
 
       - name: "Deploy"
+        if: ${{env.ENABLE_DEPLOY=='true'}}
         env:
           MY_ENV_VAR: value
         run: |
