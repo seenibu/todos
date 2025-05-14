@@ -32,7 +32,7 @@
         <sonar.organization>ept-git</sonar.organization>
         <sonar.language>java</sonar.language>
 <!--        <sonar.projectKey>sn.ept.git.seminaire.cicd.todos</sonar.projectKey>-->
-        <sonar.projectKey>todos</sonar.projectKey>
+        <sonar.projectKey>seenibu_todos</sonar.projectKey>
         <sonar.projectName>TODOS</sonar.projectName>
         <sonar.projectVersion>${project.version}</sonar.projectVersion>
 <!--        <sonar.host.url>http://localhost:9000</sonar.host.url>-->
