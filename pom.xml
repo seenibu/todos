@@ -49,7 +49,7 @@
             **/exceptions/**.java,
             **/dto/**.java,
             **/services/impl/TagServiceImpl.java,
-            **/resources/impl/TagResource.java,
+            **/resources/TagResource.java,
         </sonar-ignore>
 
         <sonar.exclusions>${sonar-ignore}</sonar.exclusions>
