@@ -187,4 +187,29 @@ class TodoServiceTest {
         );
     }
 
+    @Test
+    void deleteAll_shouldDeleteTodo() {
+        Mockito.doNothing().when(todoRepository).deleteAll();
+        assertDoesNotThrow(() -> service.deleteAll());
+    }
+
+    @Test
+    void complete_shouldCompleteTodo() {
+        Mockito.when(todoRepository.findById(Mockito.anyString()))
+                .thenReturn(Optional.ofNullable(todo));
+        Mockito.when(todoRepository.saveAndFlush(Mockito.any()))
+                .thenReturn(todo);
+        assertDoesNotThrow(() -> service.complete(todo.getId()));
+    }
+
+    @Test
+    void completeWithBadId_shouldThrowException() {
+        Mockito.when(todoRepository.findById(Mockito.anyString()))
+                .thenReturn(Optional.empty());
+        assertThrows(
+                ItemNotFoundException.class,
+                () -> service.complete(dto.getId())
+        );
+    }
+
 }
