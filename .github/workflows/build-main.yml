@@ -103,14 +103,14 @@ jobs:
           echo "$NEW_VERSION" > version.txt
           echo "VERSION=$NEW_VERSION" >> $GITHUB_OUTPUT
 
-#      - name: "Commit new version.txt"
-#        run: |
-#          git config --global user.email "ci@ept.sn"
-#          git config --global user.name "DevSecsOps"
-#          git add version.txt
-#          git commit -m "chore: bump version to ${{ steps.versioning.outputs.VERSION }}"
-#          git push
-#
+      - name: "Commit new version.txt"
+        run: |
+          git config --global user.email "ci@ept.sn"
+          git config --global user.name "DevSecsOps"
+          git add version.txt
+          git commit -m "Increment version to ${{ steps.versioning.outputs.VERSION }}"
+          git push origin main
+
 #      - name: "Create Git tag"
 #        run: |
 #          git tag v${{ steps.versioning.outputs.VERSION }}
@@ -121,7 +121,10 @@ jobs:
         run: |
           docker login -u=${{secrets.DOCKER_USERNAME }} -p=${{ secrets.DOCKER_PASSWORD }}
           docker build -t ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:${{ github.sha }}  -t ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:${{steps.versioning.outputs.VERSION}} -t  ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:latest .        
-          docker push ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }} 
+          docker push ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:${{ github.sha }}  
+          docker push ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:${{steps.versioning.outputs.VERSION}} 
+#          docker push ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:latest .
+          for tag in ${{ github.sha }} ${{steps.versioning.outputs.VERSION}} latest; do docker push ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:$tag; done
 
       - name: "Deploy"
         env:
