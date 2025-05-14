@@ -81,7 +81,7 @@ jobs:
         run: mvn -B package  -DskipTests=true
 
 
-      - name: Read and increment version
+      - name: "Read and increment version"
         id: versioning
         run: |
           VERSION=$(cat version.txt)
@@ -95,11 +95,16 @@ jobs:
           echo "$NEW_VERSION" > version.txt
           echo "VERSION=$NEW_VERSION" >> $GITHUB_OUTPUT
 
-      - name: Commit new version.txt
+      - name: "Commit new version.txt"
         run: |
           git add version.txt
           git commit -m "chore: bump version to ${{ steps.versioning.outputs.VERSION }}"
           git push
+
+      - name: "Create Git tag"
+        run: |
+          git tag v${{ steps.versioning.outputs.VERSION }}
+          git push origin v${{ steps.versioning.outputs.VERSION }}
 
       - name: Dockerize
         if: ${{env.ENABLE_DOCKER_BUILD_AND_PUSH_IMAGE=='true'}}
