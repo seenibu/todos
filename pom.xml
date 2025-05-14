@@ -52,7 +52,7 @@
             src/main/java/sn/ept/git/seminaire/cicd/mappers/**.java,\
         </sonar-ignore>
         <sonar.exclusions>${sonar-ignore}</sonar.exclusions>
-        <sonar.coverage.exclusions>${sonar.exclusions}</sonar.coverage.exclusions>
+        <sonar.coverage.exclusions>${sonar-ignore}</sonar.coverage.exclusions>
 
         <groovy-xml.version>4.0.12</groovy-xml.version>
         <rest-assured.version>5.2.1</rest-assured.version>
