@@ -27,7 +27,7 @@ jobs:
         cache: maven
 
     - name: Dependencies Scan
-      if: ${{env.ENABLE_DEPENDENCIES_SCAN}}
+      if: ${{env.ENABLE_DEPENDENCIES_SCAN=='true'}}
       run: mvn clean verify -DskipTests -Pcve
 
     - name: Unit Tests
