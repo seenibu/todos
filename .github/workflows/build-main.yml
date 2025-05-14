@@ -103,20 +103,6 @@ jobs:
           echo "$NEW_VERSION" > version.txt
           echo "VERSION=$NEW_VERSION" >> $GITHUB_OUTPUT
 
-#      - name: "Commit new version.txt"
-#        if: 1 > 2
-#        run: |
-#          git config --global user.email "ci@ept.sn"
-#          git config --global user.name "DevSecsOps"
-#          git add version.txt
-#          git commit -m "Increment version to ${{ steps.versioning.outputs.VERSION }}"
-#          git push origin main
-#
-#      - name: "Create Git tag"
-#        if: 1 > 2
-#        run: |
-#          git tag v${{ steps.versioning.outputs.VERSION }}
-#          git push origin v${{ steps.versioning.outputs.VERSION }}
       - name: "Dockerized"
         if: ${{env.ENABLE_DOCKER_BUILD_AND_PUSH_IMAGE=='true'}}
         run: |
