@@ -97,6 +97,8 @@ jobs:
 
       - name: "Commit new version.txt"
         run: |
+          git config --global user.email "ci@ept.sn"
+          git config --global user.name "DevSecsOps"
           git add version.txt
           git commit -m "chore: bump version to ${{ steps.versioning.outputs.VERSION }}"
           git push
