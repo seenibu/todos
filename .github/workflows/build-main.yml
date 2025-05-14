@@ -47,14 +47,20 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
+      - name: Cache OWASP Dependency-Check DB
+        uses: actions/cache@v4
+        with:
+          path: ~/.dependency-check
+          key: dependency-check-db-${{ runner.os }}
+
       - name: Dependencies Scan
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
-        run: mvn org.owasp:dependency-check-maven:check
+        run: mvn org.owasp:dependency-check-maven:check -Pcve -Ddata.directory=~/.dependency-check -Dnvd.api.key=${{ secrets.NVD_API_KEY }}
 
 #      - name: Dependencies Scan
       #        if: ${{env.ENABLE_DEPENDENCIES_SCAN=='true'}}
-      #        run: mvn clean verify -DskipTests -Pcve
+      #        run:
 
       - name: Tests
         if: ${{env.ENABLE_TESTS=='true'}}
