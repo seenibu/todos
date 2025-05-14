@@ -37,26 +37,26 @@ jobs:
       run: mvn test -Pit
 
     - name:  "Quality Gate"
-      if: ${{env.ENABLE_SONAR_SCAN}}
+      if: ${{env.ENABLE_SONAR_SCAN=='true'}}
       uses: sonarsource/sonarqube-scan-action@master
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
     - name: "Check Quality Gate" #can also use simple or double quotes
-      if: ${{env.ENABLE_SONAR_CHECK_SCAN}}
+      if: ${{env.ENABLE_SONAR_CHECK_SCAN=='true'}}
       id: sonarqube-quality-gate-check
       uses: sonarsource/sonarqube-quality-gate-action@master
       timeout-minutes: 5
       env:
-       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN}}
        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
     - name: Package
       run: mvn -B package  -DskipTests=true
 
     - name: Dockerize
-      if: ${{env.ENABLE_DOCKER_BUILD_AND_PUSH_IMAGE}}
+      if: ${{env.ENABLE_DOCKER_BUILD_AND_PUSH_IMAGE=='true'}}
       run: |
        docker login -u=${{secrets.DOCKER_USERNAME }} -p=${{ secrets.DOCKER_PASSWORD }}
        docker build -t ${{secrets.DOCKER_REGISTRY_IMAGE }}:${{ github.sha }} -t  ${{secrets.DOCKER_REGISTRY_IMAGE }}:latest .        # docker build -t image:tag_1 -t image:tag_2 .... -t image:tage_n .
@@ -64,7 +64,7 @@ jobs:
        docker push ${{secrets.DOCKER_REGISTRY_IMAGE }} # push all tags
 
     - name: Deploy
-      if: ${{env.ENABLE_DEPLOY}}
+      if: ${{env.ENABLE_DEPLOY=='true'}}
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.WEB_SERVER_IP }}
@@ -83,14 +83,14 @@ jobs:
    
    
     - name: Wait for deploy to finish
-      if: ${{env.ENABLE_WAIT_DEPLOY}}
+      if: ${{env.ENABLE_WAIT_DEPLOY=='true'}}
       uses: jakejarvis/wait-action@master
       with:
         time: '30s'
         
 
     - name : Test deploy
-      if: ${{env.ENABLE_CHECK_DEPLOY}}
+      if: ${{env.ENABLE_CHECK_DEPLOY=='true'}}
       id: tes-deploy-dev
       uses: indiesdev/curl@v1.1
       with:
