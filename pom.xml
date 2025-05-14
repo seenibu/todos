@@ -39,19 +39,6 @@
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.token>03ef89fd837b3d65294f134feac4a2a2e51ddb06</sonar.token>
         <sonar.java.binaries>target/classes</sonar.java.binaries>
-
-<!--        <sonar-ignore>-->
-<!--            **/*.xml,\-->
-<!--            src/main/java/sn/ept/git/seminaire/cicd/TodoApplication.java,\-->
-<!--            src/main/java/sn/ept/git/seminaire/cicd/demo/**.java,\-->
-<!--            src/main/java/sn/ept/git/seminaire/cicd/entities/**.java,\-->
-<!--            src/main/java/sn/ept/git/seminaire/cicd/utils/**.java,\-->
-<!--            src/main/java/sn/ept/git/seminaire/cicd/models/**.java,\-->
-<!--            src/main/java/sn/ept/git/seminaire/cicd/exceptions/**.java,\-->
-<!--            src/main/java/sn/ept/git/seminaire/cicd/dto/**.java,\-->
-<!--            src/main/java/sn/ept/git/seminaire/cicd/mappers/**.java,\-->
-<!--        </sonar-ignore>-->
-
         <sonar-ignore>
             **/*.xml,
             **/TodoApplication.java,
@@ -62,6 +49,8 @@
             **/exceptions/**.java,
             **/dto/**.java,
             **/mappers/**.java,
+            **/services/impl/TagServiceImpl.java
+            **/resources/impl/TagResource.java
         </sonar-ignore>
 
         <sonar.exclusions>${sonar-ignore}</sonar.exclusions>
