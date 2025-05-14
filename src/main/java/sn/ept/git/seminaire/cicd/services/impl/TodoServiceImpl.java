@@ -107,7 +107,6 @@ public class TodoServiceImpl implements ITodoService {
         if(optional.isPresent()){
             final Todo todo = optional.get();
             todo.setCompleted(true);
-            repository.saveAndFlush(todo);
             return mapper.toDTO(repository.saveAndFlush(todo));
         }
         throw new ItemNotFoundException(
