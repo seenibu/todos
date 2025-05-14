@@ -75,8 +75,6 @@ class TodoServiceTest {
     void save_withSameTitle_shouldThrowException() {
         Mockito.when(todoRepository.findByTitle(Mockito.any()))
                 .thenReturn(Optional.ofNullable(todo));
-        Mockito.when(todoRepository.findByTitleWithIdNotEquals(Mockito.anyString(), Mockito.anyString()))
-                .thenReturn(Optional.empty());
         assertThrows(ItemExistsException.class, () -> service.save(dto));
     }
 
