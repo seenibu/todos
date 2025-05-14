@@ -48,9 +48,8 @@
             **/models/**.java,
             **/exceptions/**.java,
             **/dto/**.java,
-            **/mappers/**.java,
-            **/services/impl/TagServiceImpl.java
-            **/resources/impl/TagResource.java
+            **/services/impl/TagServiceImpl.java,
+            **/resources/impl/TagResource.java,
         </sonar-ignore>
 
         <sonar.exclusions>${sonar-ignore}</sonar.exclusions>
