@@ -2,7 +2,7 @@ name: Build Main Brachn
 
 on:
   push:
-    branches: [ "__main" ]
+    branches: [ "main" ]
 
 jobs:
   build:
@@ -18,85 +18,86 @@ jobs:
       ENABLE_CHECK_DEPLOY: false
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Java
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: maven
+      - uses: actions/checkout@v3
 
-    - name: Dependencies Scan
-      if: ${{env.ENABLE_DEPENDENCIES_SCAN=='true'}}
-      run: mvn clean verify -DskipTests -Pcve
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
-    - name: Unit Tests
-      run: mvn test -Put
+      - name: Cache SonarQube packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
 
-    - name: Integration Tests
-      run: mvn test -Pit
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
 
-    - name:  "Quality Gate"
-      if: ${{env.ENABLE_SONAR_SCAN=='true'}}
-      uses: sonarsource/sonarqube-scan-action@master
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      - name: Dependencies Scan
+        if: ${{env.ENABLE_DEPENDENCIES_SCAN=='true'}}
+        run: mvn clean verify -DskipTests -Pcve
 
-    - name: "Check Quality Gate" #can also use simple or double quotes
-      if: ${{env.ENABLE_SONAR_CHECK_SCAN=='true'}}
-      id: sonarqube-quality-gate-check
-      uses: sonarsource/sonarqube-quality-gate-action@master
-      timeout-minutes: 5
-      env:
-       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN}}
-       SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      - name: Unit Tests
+        run: mvn test -Put
 
-    - name: Package
-      run: mvn -B package  -DskipTests=true
+      - name: Integration Tests
+        run: mvn test -Pit
 
-    - name: Dockerize
-      if: ${{env.ENABLE_DOCKER_BUILD_AND_PUSH_IMAGE=='true'}}
-      run: |
-       docker login -u=${{secrets.DOCKER_USERNAME }} -p=${{ secrets.DOCKER_PASSWORD }}
-       docker build -t ${{secrets.DOCKER_REGISTRY_IMAGE }}:${{ github.sha }} -t  ${{secrets.DOCKER_REGISTRY_IMAGE }}:latest .        # docker build -t image:tag_1 -t image:tag_2 .... -t image:tage_n .
-       #docker push ${{secrets.DOCKER_REGISTRY_IMAGE }}:latest # only push latest tag
-       docker push ${{secrets.DOCKER_REGISTRY_IMAGE }} # push all tags
+      - name: "Quality gate"
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          run: mvn -B clean verify sonar:sonar -Dsonar.projectKey=seenibu_todos
 
-    - name: Deploy
-      if: ${{env.ENABLE_DEPLOY=='true'}}
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.WEB_SERVER_IP }}
-        username: ${{ secrets.WEB_SERVER_USERNAME }}
-        key: ${{ secrets.WEB_SERVER_KEY }}
-        port: 22
-        script: | #script to execute once inside the remote computer
-          mkdir -p ~/.ssh
-          touch  ~/.ssh/known_hosts
-          ssh-keyscan -H ${{ secrets.WEB_SERVER_IP }} >> ~/.ssh/known_hosts
-          sudo sudo apt-get update
-          sudo apt install docker.io
-          docker --version # just to test installation
-          sudo docker container ls -aq --filter name=cicdeptgitdic1 |xargs --no-run-if-empty sudo docker stop |xargs --no-run-if-empty sudo  docker container rm 
-          sudo docker run --name cicdeptgitdic1  -d -p 80:8080 <<your_docker_hub_user_name>>/todos:latest
-   
-   
-    - name: Wait for deploy to finish
-      if: ${{env.ENABLE_WAIT_DEPLOY=='true'}}
-      uses: jakejarvis/wait-action@master
-      with:
-        time: '30s'
-        
+      - name: "Check Quality Gate"
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          PROJECT_KEY=seenibu_todos
+          ANALYSIS_STATUS_URL="https://sonarcloud.io/api/qualitygates/project_status?projectKey=$PROJECT_KEY"
+          
+          echo "Waiting for Quality Gate result..."
+          sleep 5
+          
+          STATUS=$(curl -s -u $SONAR_TOKEN: "$ANALYSIS_STATUS_URL" | jq -r '.projectStatus.status')
+          
+          echo "Quality Gate Status: $STATUS"
+          if [ "$STATUS" != "OK" ]; then
+            echo "Quality Gate failed!"
+            exit 1
+          fi
 
-    - name : Test deploy
-      if: ${{env.ENABLE_CHECK_DEPLOY=='true'}}
-      id: tes-deploy-dev
-      uses: indiesdev/curl@v1.1
-      with:
-          url: http://${{secrets.WEB_SERVER_IP }}/cicd/_health
-          method: "GET"
-          accept: 200
-          timeout: 5000
-          log-response: true
-          retries: 2
+      - name: Package
+        run: mvn -B package  -DskipTests=true
+
+      - name: Dockerize
+        if: ${{env.ENABLE_DOCKER_BUILD_AND_PUSH_IMAGE=='true'}}
+        run: |
+          docker login -u=${{secrets.DOCKER_USERNAME }} -p=${{ secrets.DOCKER_PASSWORD }}
+          docker build -t ${{secrets.DOCKER_REGISTRY_IMAGE }}:${{ github.sha }} -t  ${{secrets.DOCKER_REGISTRY_IMAGE }}:latest .        # docker build -t image:tag_1 -t image:tag_2 .... -t image:tage_n .
+          #docker push ${{secrets.DOCKER_REGISTRY_IMAGE }}:latest # only push latest tag
+          docker push ${{secrets.DOCKER_REGISTRY_IMAGE }} # push all tags
+
+      - name: "Deploy"
+        env:
+          MY_ENV_VAR: value
+        run: |
+          echo "Step will be ready soon .. "
+
+      - name: "Wait for deploy to finish"
+        if: ${{env.ENABLE_WAIT_DEPLOY=='true'}}
+        uses: jakejarvis/wait-action@master
+        with:
+          time: '30s'
+
+      - name: "Test Deploy"
+        env:
+          MY_ENV_VAR: value
+        run: |
+          echo "Step will be ready soon .. "

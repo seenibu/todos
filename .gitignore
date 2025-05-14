@@ -173,3 +173,5 @@ Desktop.ini
 hs_err_pid*
 
 secrets.txt
+./secrets.txt
+/secrets.txt
