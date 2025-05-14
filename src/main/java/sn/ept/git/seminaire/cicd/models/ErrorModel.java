@@ -9,4 +9,4 @@ import java.time.LocalDateTime;
  */
 
 @Builder
-public record ErrorModel (int status, LocalDateTime date, String message, String description) {}
+public record ErrorModel (String systemId,String systemName,String type, int status, LocalDateTime date, String message, String description) {}

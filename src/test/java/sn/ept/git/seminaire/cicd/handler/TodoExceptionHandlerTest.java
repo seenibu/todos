@@ -1,7 +1,6 @@
 package sn.ept.git.seminaire.cicd.handler;
 
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.AbstractObjectAssert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,6 +21,7 @@ import sn.ept.git.seminaire.cicd.exceptions.InvalidException;
 import sn.ept.git.seminaire.cicd.exceptions.ItemExistsException;
 import sn.ept.git.seminaire.cicd.exceptions.ItemNotFoundException;
 import sn.ept.git.seminaire.cicd.models.ErrorModel;
+import sn.ept.git.seminaire.cicd.utils.Constantes;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -34,7 +34,6 @@ import static org.junit.jupiter.params.provider.Arguments.of;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
-@DisplayName("Todo ExceptionHandler Tests ")
 class TodoExceptionHandlerTest {
 
     @Mock
@@ -53,55 +52,49 @@ class TodoExceptionHandlerTest {
     }
 
     @Test
-     @DisplayName("Test Handle NotFound")
     void testHandleNotFound() {
         ItemNotFoundException exception = new ItemNotFoundException(msg);
         response = handler.notFound(exception, request);
-        verifyFormattedError(response, HttpStatus.NOT_FOUND, msg, desc);
+        verifyFormattedError(Constantes.TYPE_VALIDATION,response, HttpStatus.NOT_FOUND, msg, desc);
     }
 
     @Test
-     @DisplayName("Test Handle Conflict")
     void testHandleConflict() {
         ItemExistsException exception = new ItemExistsException(msg);
         response = handler.conflict(exception, request);
-        verifyFormattedError(response, HttpStatus.CONFLICT, msg, desc);
+        verifyFormattedError(Constantes.TYPE_VALIDATION,response, HttpStatus.CONFLICT, msg, desc);
     }
 
     @Test
-     @DisplayName("Test Handle BadRequest")
     void testHandleBadRequest() {
         InvalidException exception = new InvalidException(msg);
         response = handler.badRequest(exception, request);
-        verifyFormattedError(response, HttpStatus.BAD_REQUEST, msg, desc);
+        verifyFormattedError(Constantes.TYPE_VALIDATION,response, HttpStatus.BAD_REQUEST, msg, desc);
     }
 
     @Test
-     @DisplayName("Test Handle PermissionDenied")
     void testHandlePermissionDenied() {
         ForbiddenException exception = new ForbiddenException(msg);
         response = handler.permissionDenied(exception, request);
-        verifyFormattedError(response, HttpStatus.FORBIDDEN, msg, desc);
+        verifyFormattedError(Constantes.TYPE_PERMISSION,response, HttpStatus.FORBIDDEN, msg, desc);
     }
 
     @ParameterizedTest
     @MethodSource("othersExceptionsTestData")
-     @DisplayName("Test Handle InternalError")
     void testHandleInternalError(Exception exception) {
         response = handler.internalError(exception, request);
-        verifyFormattedError(response, HttpStatus.INTERNAL_SERVER_ERROR, msg, desc);
+        verifyFormattedError(Constantes.TYPE_SYSTEM,response, HttpStatus.INTERNAL_SERVER_ERROR, msg, desc);
     }
 
     @ParameterizedTest
     @MethodSource("responseStatusErrorTestData")
-     @DisplayName("Test Handle ResponseStatus")
     void testHandleResponseStatus(HttpStatusCode statusCode) {
         ResponseStatusException exception = new ResponseStatusException(statusCode, msg);
         response = handler.responseStatus(exception, request);
-        verifyFormattedError(response, HttpStatus.valueOf(statusCode.value()), msg, desc);
+        verifyFormattedError(Constantes.TYPE_SYSTEM,response, HttpStatus.valueOf(statusCode.value()), msg, desc);
     }
 
-    private void verifyFormattedError(final ResponseEntity<ErrorModel> response, final HttpStatus httpStatus, final String message, final String description) {
+    private void verifyFormattedError(String type, final ResponseEntity<ErrorModel> response, final HttpStatus httpStatus, final String message, final String description) {
         Predicate<? super Object> messagePredicate = msg -> msg.toString().contains(message);
         Predicate<? super Object> datePredicate = date -> {
             LocalDateTime now = LocalDateTime.now(Clock.systemUTC());
@@ -139,6 +132,21 @@ class TodoExceptionHandlerTest {
                 .extracting("date")
                 .isExactlyInstanceOf(LocalDateTime.class)
                 .matches(datePredicate);
+
+        assertThat(body)
+                .extracting("systemId")
+                .isExactlyInstanceOf(String.class)
+                .isEqualTo(Constantes.SYSTEM_ID);
+
+        assertThat(body)
+                .extracting("systemName")
+                .isExactlyInstanceOf(String.class)
+                .isEqualTo(Constantes.SYSTEM_NAME);
+
+        assertThat(body)
+                .extracting("type")
+                .isExactlyInstanceOf(String.class)
+                .isEqualTo(type);
 
     }
 

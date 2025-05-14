@@ -76,7 +76,6 @@ public class TodoResource {
     public ResponseEntity<TodoDTO> complete(@PathVariable("id") String id) {
         log.info(LogUtils.LOG_START,CLASS_NAME, "complete");
         final TodoDTO dto = service.complete(id);
-        Optional<TodoDTO> optional = Optional.ofNullable(dto);
-        return ResponseUtil.wrapOrNotFound(optional,HttpStatus.ACCEPTED);
+        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(dto),HttpStatus.ACCEPTED);
     }
 }

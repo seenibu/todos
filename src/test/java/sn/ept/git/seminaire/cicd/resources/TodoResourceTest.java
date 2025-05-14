@@ -1,5 +1,6 @@
 package sn.ept.git.seminaire.cicd.resources;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,10 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import sn.ept.git.seminaire.cicd.data.TestData;
 import sn.ept.git.seminaire.cicd.data.TodoDTOTestData;
 import sn.ept.git.seminaire.cicd.models.TodoDTO;
 import sn.ept.git.seminaire.cicd.exceptions.ItemNotFoundException;
@@ -20,7 +21,6 @@ import sn.ept.git.seminaire.cicd.services.impl.TodoServiceImpl;
 import sn.ept.git.seminaire.cicd.utils.TestUtil;
 import sn.ept.git.seminaire.cicd.utils.UrlMapping;
 
-import java.time.Instant;
 import java.util.*;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -42,108 +42,55 @@ class TodoResourceTest {
     @Autowired
     private TodoResource todoResource;
     private TodoDTO dto;
-     private TodoDTO vm;
-    private static final  Instant now = Instant.now();
-    private static final Map<String, TodoDTO> fakeTodoDatabase = new HashMap<>();
-
 
     @BeforeAll
     static void beforeAll() {
         log.info(" before all ");
     }
 
+    int page = 0;
+    int size = 10;
+
     @BeforeEach
     void beforeEach() {
         log.info(" before each ");
-        service.deleteAll();
-        vm = TodoDTOTestData.defaultDTO();
-        fakeTodoDatabase.clear();
+        dto = TodoDTOTestData.defaultDTO();
     }
 
-
-    private void mockServiceUpdate() {
-        Mockito.when(service.update(Mockito.anyString(),Mockito.any(TodoDTO.class)))
-                .thenAnswer(invocation -> {
-                    String id =invocation.getArgument(0,String.class);
-                    TodoDTO todo =invocation.getArgument(1,TodoDTO.class);
-                    TodoDTO toUpdate =fakeTodoDatabase.getOrDefault(id, null);
-                    if(null == toUpdate){
-                        throw new ItemNotFoundException();
-                    }
-                    toUpdate.setId(id);
-                    toUpdate.setTitle(todo.getTitle());
-                    toUpdate.setDescription(todo.getDescription());
-                    toUpdate.setCreatedDate(now);
-                    toUpdate.setLastModifiedDate(now);
-                    fakeTodoDatabase.put(id, toUpdate);
-                    return toUpdate;
-                });
-    }
-
-    private void mockServiceSave() {
-        Mockito.when(service.save(Mockito.any(TodoDTO.class)))
-                .thenAnswer(invocation -> {
-                    TodoDTO todo =invocation.getArgument(0,TodoDTO.class);
-                    String id =UUID.randomUUID().toString();
-                    todo.setId(id);
-                    todo.setTitle(todo.getTitle());
-                    todo.setDescription(todo.getDescription());
-                    todo.setCreatedDate(now);
-                    todo.setLastModifiedDate(now);
-                    fakeTodoDatabase.put(id, todo);
-                    return todo;
-                });
-    }
-
-    private void mockServiceFindALL() {
-        Mockito.when(service.findAll(Mockito.any(Pageable.class)))
-                .thenAnswer(invocation -> new PageImpl<>(List.copyOf(fakeTodoDatabase.values())));
-    }
-
-    private void mockServiceFindById() {
-        Mockito.when(service.findById(Mockito.any(String.class)))
-                .thenAnswer(invocation ->{
-                    String id =invocation.getArgument(0,String.class);
-                    return Optional.ofNullable(fakeTodoDatabase.getOrDefault(id,null));
-                });
-    }
-
-    private void mockServiceDelete() {
-        Mockito.doAnswer(invocation ->{
-                    String id =invocation.getArgument(0,String.class);
-                    TodoDTO toDelete= fakeTodoDatabase.get(id);
-                    if(null == toDelete){
-                        throw new ItemNotFoundException();
-                    }
-                    fakeTodoDatabase.remove(id);
-                    return null;
-                }).when(service)
-                .delete(Mockito.any(String.class));
-    }
-
-
+    @SneakyThrows
     @Test
-    void findAll_shouldReturnTodos() throws Exception {
-        mockServiceSave();
-        mockServiceFindALL();
-        dto = service.save(vm);
+    void findAll_shouldReturnTodos() {
+        Mockito.when(service.findAll(Mockito.any(Pageable.class)))
+                .thenReturn(
+                        new PageImpl<>(
+                                List.of(
+                                        dto),
+                                PageRequest.of(page, size),
+                                1
+                        )
+                );
+
         mockMvc.perform(get(UrlMapping.Todo.ALL)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", hasSize(1)))
                 .andExpect(jsonPath("$.content.[0].id").exists())
                 .andExpect(jsonPath("$.content.[0].version").exists())
-                .andExpect(jsonPath("$.content.[0].title", is(dto.getTitle())))
-                .andExpect(jsonPath("$.content.[0].description").value(dto.getDescription()))
+                .andExpect(jsonPath("$.content.[0].title", is(
+                        dto.getTitle())))
+                .andExpect(jsonPath("$.content.[0].description").value(
+                        dto.getDescription()))
         ;
 
     }
+
+    @SneakyThrows
     @Test
-    void findById_shouldReturnTodo() throws Exception {
-        mockServiceSave();
-        mockServiceFindById();
-        dto = service.save(vm);
-        mockMvc.perform(get(UrlMapping.Todo.FIND_BY_ID, dto.getId())
+    void findById_shouldReturnTodo() {
+        Mockito.when(service.findById(Mockito.eq(dto.getId())))
+                .thenReturn(Optional.ofNullable(dto));
+        mockMvc.perform(get(UrlMapping.Todo.FIND_BY_ID,
+                        dto.getId())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").exists())
@@ -153,71 +100,91 @@ class TodoResourceTest {
         ;
     }
 
+    @SneakyThrows
     @Test
-    void findById_withBadId_shouldReturnNotFound() throws Exception {
-        mockServiceFindById();
+    void findById_withBadId_shouldReturnNotFound() {
+        Mockito.when(service.findById(Mockito.anyString()))
+                .thenReturn(Optional.empty());
         mockMvc.perform(get(UrlMapping.Todo.FIND_BY_ID, UUID.randomUUID().toString())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
 
-
+    @SneakyThrows
     @Test
-    void add_shouldCreateTodo() throws Exception {
-        mockServiceSave();
+    void add_shouldCreateTodo() {
+        Mockito.when(service.save(Mockito.any(TodoDTO.class)))
+                .thenReturn(
+                        dto);
         mockMvc.perform(
                         post(UrlMapping.Todo.ADD)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(TestUtil.convertObjectToJsonBytes(vm))
+                                .content(TestUtil.convertObjectToJsonBytes(dto))
                 )
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.version").exists())
-                .andExpect(jsonPath("$.title").value(vm.getTitle()))
-                .andExpect(jsonPath("$.description").value(vm.getDescription()))
+                .andExpect(jsonPath("$.title").value(dto.getTitle()))
+                .andExpect(jsonPath("$.description").value(dto.getDescription()))
         ;
     }
 
-
+    @SneakyThrows
     @Test
-    void update_shouldUpdateTodo() throws Exception {
-        mockServiceSave();
-        mockServiceUpdate();
-        dto = service.save(vm);
-        vm.setTitle(TestData.Update.title);
-        vm.setDescription(TestData.Update.description);
+    void update_shouldUpdateTodo() {
+        Mockito.when(service.update(Mockito.any(), Mockito.any()))
+                .thenReturn(dto);
         mockMvc.perform(
-                        put(UrlMapping.Todo.UPDATE, dto.getId())
+                        put(UrlMapping.Todo.UPDATE,
+                                dto.getId())
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(TestUtil.convertObjectToJsonBytes(vm))
+                                .content(TestUtil.convertObjectToJsonBytes(dto))
                 )
                 .andExpect(status().isAccepted())
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.version").exists())
-                .andExpect(jsonPath("$.title").value(vm.getTitle()))
-                .andExpect(jsonPath("$.description").value(vm.getDescription()))
-        ;
+                .andExpect(jsonPath("$.title").value(dto.getTitle()))
+                .andExpect(jsonPath("$.description").value(dto.getDescription()));
     }
 
+    @SneakyThrows
     @Test
-    void delete_shouldDeleteTodo() throws Exception {
-        mockServiceSave();
-        mockServiceDelete();
-        dto = service.save(vm);
+    void delete_shouldDeleteTodo() {
+        Mockito.doNothing().when(service).delete(Mockito.any());
         mockMvc.perform(
-                delete(UrlMapping.Todo.DELETE, dto.getId())
+                delete(UrlMapping.Todo.DELETE,
+                        dto.getId())
                         .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isNoContent());
     }
 
+    @SneakyThrows
     @Test
-    void delete_withBadId_shouldReturnNotFound() throws Exception {
-        mockServiceSave();
-        mockServiceDelete();
-        dto = service.save(vm);
+    void delete_withBadId_shouldReturnNotFound() {
+        Mockito.doThrow(
+                new ItemNotFoundException(
+                        ItemNotFoundException.format(ItemNotFoundException.TODO_BY_ID, dto.getId())
+                )
+        ).when(service).delete(Mockito.anyString());
         mockMvc.perform(
                 delete(UrlMapping.Todo.DELETE, UUID.randomUUID().toString())
                         .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isNotFound());
+    }
+
+    @SneakyThrows
+    @Test
+    void complete_shouldCompleteTodo() {
+        dto.setCompleted(true);
+        Mockito.when(service.complete(Mockito.anyString()))
+                .thenReturn(dto);
+        mockMvc.perform(get(UrlMapping.Todo.COMPLETE,
+                        dto.getId())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isAccepted())
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.completed").exists())
+                .andExpect(jsonPath("$.completed", is(true)))
+        ;
     }
 }
