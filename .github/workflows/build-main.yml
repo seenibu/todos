@@ -10,7 +10,7 @@ jobs:
 
     env:
       ENABLE_TESTS: true
-      ENABLE_DEPENDENCIES_SCAN: true
+      ENABLE_DEPENDENCIES_SCAN: false
       ENABLE_SONAR_SCAN: true
       ENABLE_SONAR_CHECK_SCAN: true
       ENABLE_DOCKER_BUILD_AND_PUSH_IMAGE: true
@@ -48,8 +48,13 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Dependencies Scan
-        if: ${{env.ENABLE_DEPENDENCIES_SCAN=='true'}}
-        run: mvn clean verify -DskipTests -Pcve
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+        run: mvn org.owasp:dependency-check-maven:check
+
+#      - name: Dependencies Scan
+      #        if: ${{env.ENABLE_DEPENDENCIES_SCAN=='true'}}
+      #        run: mvn clean verify -DskipTests -Pcve
 
       - name: Tests
         if: ${{env.ENABLE_TESTS=='true'}}

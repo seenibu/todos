@@ -366,6 +366,7 @@
                             <suppressionFiles>
                                 <suppressionFile>${basedir}/suppression.xml</suppressionFile>
                             </suppressionFiles>
+                            <nvdApiKey>ef95a799-92de-4719-840b-05bc80b09381</nvdApiKey>
                         </configuration>
                         <executions>
                             <execution>
