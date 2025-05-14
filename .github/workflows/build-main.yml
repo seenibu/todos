@@ -86,8 +86,7 @@ jobs:
           docker login -u=${{secrets.DOCKER_USERNAME }} -p=${{ secrets.DOCKER_PASSWORD }}
           docker build -t ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:${{ github.sha }} -t  ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }}:latest .        
           docker push ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE }} 
-
-
+          docker run  -p 8080:8080 --name instance_todos kor13za/todos:lates #just test
       - name: "Deploy"
         env:
           MY_ENV_VAR: value
