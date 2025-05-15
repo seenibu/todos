@@ -2,14 +2,13 @@ name: "Integration Tests"
 description: "Integration Tests Step"
 
 inputs:
-  enabled:
+  ENABLED:
     description: "Enable step"
     required: false
     default: "true"
   PROJECT_KEY :
     description: "Sonar project key"
-    required: false
-    default: "seenibu_todos"
+    required: true
   SONAR_TOKEN:
     description: "SONAR TOKEN"
     required: true
@@ -22,7 +21,7 @@ runs:
   using: "composite"
   steps:
     - name: "Quality gate"
-      if: ${{inputs.enabled=='true'}}
+      if: ${{inputs.ENABLED=='true'}}
       env:
         SONAR_TOKEN: ${{ inputs.SONAR_TOKEN }}
       run: |
@@ -31,21 +30,22 @@ runs:
       shell: bash
 
     - name: "Check Quality Gate"
-      if: ${{inputs.enabled=='true'}}
+      if: ${{inputs.ENABLED=='true'}}
       env:
         SONAR_TOKEN: ${{ inputs.SONAR_TOKEN }}
       run: |
         PROJECT_KEY=${{inputs.PROJECT_KEY}}
-        ANALYSIS_STATUS_URL="${{ inputs.SONAR_HOST }}/api/qualitygates/project_status?projectKey=$PROJECT_KEY"
+        ANALYSIS_STATUS_URL="${{ inputs.SONAR_HOST }}/api/qualitygates/project_status?projectKey=${{inputs.PROJECT_KEY}}"
 
         echo "🔄 Waiting for Quality Gate to be ready ..."
         sleep 5
 
-        STATUS=$(curl -s -u $SONAR_TOKEN: "$ANALYSIS_STATUS_URL" | jq -r '.projectStatus.status')
+        STATUS=$(curl -s -u ${{inputs.PROJECT_KEY}}: "$ANALYSIS_STATUS_URL" | jq -r '.projectStatus.status')
 
         echo "Quality Gate Status : $STATUS"
         if [ "$STATUS" != "OK" ]; then
           echo "❌ Quality Gate failed, status = $STATUS !"
           exit 1
         fi
+        echo "🚀🔸🔹👉 Find analysis result at : $ANALYSIS_STATUS_URL"
       shell: bash

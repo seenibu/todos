@@ -40,6 +40,10 @@ jobs:
       - uses: ./.github/actions/integration-tests
 
       - uses: ./.github/actions/quality-gate
+        with:
+          PROJECT_KEY: "seenibu_todos"
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST: "https://sonarcloud.io"
 
       - uses: ./.github/actions/package
 
