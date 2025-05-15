@@ -12,8 +12,7 @@ inputs:
     default: "seenibu_todos"
   SONAR_TOKEN:
     description: "SONAR TOKEN"
-    required: false
-    default: ${{ secrets.SONAR_TOKEN }}
+    required: true
   SONAR_HOST:
     description: "Sonar Host"
     required: false
@@ -34,7 +33,7 @@ runs:
     - name: "Check Quality Gate"
       if: ${{inputs.enabled=='true'}}
       env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_TOKEN: ${{ inputs.SONAR_TOKEN }}
       run: |
         PROJECT_KEY=${{inputs.PROJECT_KEY}}
         ANALYSIS_STATUS_URL="${{ inputs.SONAR_HOST }}/api/qualitygates/project_status?projectKey=$PROJECT_KEY"
