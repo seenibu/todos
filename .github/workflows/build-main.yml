@@ -54,9 +54,10 @@ jobs:
         with:
           DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-          DOCKER_NAMESPACE: ${{secrets.DOCKER_NAMESPACE}}
-          DOCKER_REGISTRY_IMAGE: ${{secrets.DOCKER_REGISTRY_IMAGE }}
+#          DOCKER_NAMESPACE: ${{secrets.DOCKER_NAMESPACE}}
+#          DOCKER_REGISTRY_IMAGE: ${{secrets.DOCKER_REGISTRY_IMAGE }}
           VERSION: ${{steps.release.outputs.VERSION}}
+          IMAGE_FULL_NAME:  ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE}}
 
       - uses: ./.github/actions/deploy
 

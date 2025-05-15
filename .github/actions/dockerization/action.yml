@@ -12,14 +12,17 @@ inputs:
   DOCKER_PASSWORD:
     description: "DOCKER PASSWORD"
     required: true
-  DOCKER_NAMESPACE:
-    description: "DOCKER NAMESPACE"
-    required: true
-  DOCKER_REGISTRY_IMAGE:
-    description: "DOCKER REGISTRY IMAGE"
-    required: true
+#  DOCKER_NAMESPACE:
+#    description: "DOCKER NAMESPACE"
+#    required: true
+#  DOCKER_REGISTRY_IMAGE:
+#    description: "DOCKER REGISTRY IMAGE"
+#    required: true
   VERSION:
     description: "DOCKER REGISTRY IMAGE"
+    required: true
+  IMAGE_FULL_NAME:
+    description: "At the form: Username/image-name"
     required: true
 
 
@@ -31,8 +34,9 @@ runs:
       if: ${{inputs.ENABLED=='true'}}
       run: |
         echo "⚙️ Build docker image with versions :${{inputs.VERSION}},latest "
-        docker login -u=${{inputs.DOCKER_USERNAME }} -p=${{ inputs.DOCKER_PASSWORD }}
-        docker build -t ${{inputs.DOCKER_NAMESPACE}}/${{inputs.DOCKER_REGISTRY_IMAGE }}:${{steps.versioning.outputs.VERSION}} -t ${{inputs.DOCKER_NAMESPACE}}/${{inputs.DOCKER_REGISTRY_IMAGE }}:latest .        
-        docker push ${{inputs.DOCKER_NAMESPACE}}/${{inputs.DOCKER_REGISTRY_IMAGE }}:${{inputs.VERSION}}
-        docker push ${{inputs.DOCKER_NAMESPACE}}/${{inputs.DOCKER_REGISTRY_IMAGE }}:latest 
+#       docker login -u=${{inputs.DOCKER_USERNAME }} -p=${{ inputs.DOCKER_PASSWORD }}
+         echo "${{ inputs.DOCKER_PASSWORD }}" | docker login -u "${{ inputs.DOCKER_USER }}" --password-stdin
+        docker build -t ${{inputs.IMAGE_FULL_NAME}}:${{inputs.VERSION}} -t ${{inputs.IMAGE_FULL_NAME}}:latest .        
+        docker push ${{inputs.IMAGE_FULL_NAME}}:${{inputs.VERSION}}
+        docker push ${{inputs.IMAGE_FULL_NAME}}:latest
       shell: bash
