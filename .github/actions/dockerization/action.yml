@@ -22,6 +22,8 @@ inputs:
     description: "DOCKER REGISTRY IMAGE"
     required: true
 
+
+
 runs:
   using: "composite"
   steps:

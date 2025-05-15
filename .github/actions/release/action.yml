@@ -11,6 +11,11 @@ inputs:
     required: false
     default: "version.txt"
 
+outputs:
+  VERSION:
+    description: "The greeting message"
+    value: ${{ steps.versioning.outputs.VERSION }}
+
 runs:
   using: "composite"
   steps:

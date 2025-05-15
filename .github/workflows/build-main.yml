@@ -48,6 +48,7 @@ jobs:
       - uses: ./.github/actions/package
 
       - uses: ./.github/actions/release
+        id : release
 
       - uses: ./.github/actions/dockerization
         with:
@@ -55,7 +56,7 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           DOCKER_NAMESPACE: ${{secrets.DOCKER_NAMESPACE}}
           DOCKER_REGISTRY_IMAGE: ${{secrets.DOCKER_REGISTRY_IMAGE }}
-          VERSION: ${{steps.versioning.outputs.VERSION}}
+          VERSION: ${{steps.release.outputs.VERSION}}
 
       - uses: ./.github/actions/deploy
 
