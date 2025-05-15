@@ -1,38 +1,52 @@
 name: Pull Request
 on:
-  pull_request:
-#    types: [opened, synchronize, reopened]
+  push:
      branches:
-       - DIC1-*
-       - IS-*
+       - 'DIC1-*'
+       - 'IS-*'
+
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     env:
-      ROOT_ACTIONS: ./.github/actions
+      ENABLE_TESTS: false
+      ENABLE_DEPENDENCIES_SCAN: false
+      ENABLE_SONAR_SCAN: false
 
     steps:
       - uses: actions/checkout@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: ${{env.ROOT_ACTIONS}}/setup-env
+      - uses: ./.github/actions/setup-env
 
-      - uses: ${{env.ROOT_ACTIONS}}/dependency-scan
+      - uses: ./.github/actions/secrets-scan
+
+#      - name: Secrets Scan
+#        if: 1> 2
+#        uses: gitleaks/gitleaks-action@v2
+#        env:
+#          GITLEAKS_NOTIFY_USER_LIST: senei@ept.sn
+#        with:
+#          args: detect --source=. --report-format=sarif --report-path=gitleaks-report.sarif  --exit-code=0
+#          args: detect --source=. --redact --report-format=sarif --report-path=gitleaks-report.sarif  --exit-code=0
+
+
+
+      - uses: ./.github/actions/dependency-scan
         with:
-          ENABLED : "false"
+          ENABLED: ${{ env.ENABLE_DEPENDENCIES_SCAN }}
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
 
-      - uses: ${{env.ROOT_ACTIONS}}/tests
-
-      - uses: ${{env.ROOT_ACTIONS}}/quality-gate
+      - uses: ./.github/actions/tests
         with:
-          ENABLED : "false"
+          ENABLED: ${{ env.ENABLE_TESTS }}
+
+      - uses: ./.github/actions/quality-gate
+        with:
+          ENABLED: ${{ env.ENABLE_SONAR_SCAN }}
           PROJECT_KEY: "seenibu_todos"
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST: "https://sonarcloud.io"
-
-      - uses: ${{env.ROOT_ACTIONS}}/package
-
