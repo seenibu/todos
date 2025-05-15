@@ -18,7 +18,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Dependencies Scan
+    - name: "Dependencies Scan"
       if: ${{inputs.ENABLED=='true'}}
       env:
         NVD_API_KEY: ${{ inputs.NVD_API_KEY }}
