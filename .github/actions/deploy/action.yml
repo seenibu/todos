@@ -1,0 +1,31 @@
+name: "Deploy"
+description: "Deploy Step"
+
+inputs:
+  ENABLED:
+    description: "Enable step"
+    required: false
+    default: "true"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Deploy"
+      if: ${{inputs.ENABLED=='true'}}
+      env:
+        MY_ENV_VAR: value
+      run: |
+        echo "🚀 Step will be ready soon .. "
+
+    - name: "Wait for deploy to finish"
+      if: ${{inputs.ENABLED=='true'}}
+      uses: jakejarvis/wait-action@master
+      with:
+        time: '30s'
+
+    - name: "Test Deploy"
+      if: ${{inputs.ENABLED=='true'}}
+      env:
+        MY_ENV_VAR: value
+      run: |
+        echo "🧪 Step will be ready soon .. "

@@ -1,0 +1,21 @@
+name: "Integration Tests"
+description: "Integration Tests Step"
+
+inputs:
+  ENABLED:
+    description: "Enable step"
+    required: false
+    default: "true"
+  PROFILE:
+    description: "Active profile"
+    required: false
+    default: "it"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Integration Tests
+      if: ${{inputs.ENABLED=='true'}}
+      run: |
+        echo "🧪 Run integration tests with profile ${{inputs.PROFILE}}"
+        mvn test -P${{inputs.PROFILE}}

@@ -1,0 +1,17 @@
+name: "Package"
+description: "Package Step"
+
+inputs:
+  ENABLED:
+    description: "Enable step"
+    required: false
+    default: "true"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Package"
+      if: ${{inputs.ENABLED=='true'}}
+      run: |
+        echo "📦 Packaging ..."
+        mvn -B package  -DskipTests=true

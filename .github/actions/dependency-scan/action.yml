@@ -1,0 +1,26 @@
+name: "Dependency Scan"
+description: "Dependency Scan Step"
+
+inputs:
+  ENABLED:
+    description: "Enable step"
+    required: false
+    default: "true"
+  PROFILE:
+    description: "Active profile"
+    required: false
+    default: "cve"
+  NVD_API_KEY:
+    description: "NVD API KEY"
+    required: false
+    default: ${{ secrets.NVD_API_KEY }}
+
+
+runs:
+  using: "composite"
+  steps:
+    - name: Dependencies Scan
+      if: ${{inputs.ENABLED=='true'}}
+      env:
+        NVD_API_KEY: ${{ inputs.NVD_API_KEY }}
+      run: mvn org.owasp:dependency-check-maven:check -P${{ inputs.PROFILE}} -Ddata.directory=~/.dependency-check -Dnvd.api.key=${{ inputs.NVD_API_KEY }}

@@ -1,0 +1,35 @@
+name: "Integration Tests"
+description: "Integration Tests Step"
+
+inputs:
+  ENABLED:
+    description: "Enable step"
+    required: false
+    default: "true"
+  DOCKER_USERNAME:
+    description: "DOCKER USERNAME"
+    required: true
+  DOCKER_PASSWORD:
+    description: "DOCKER PASSWORD"
+    required: true
+  DOCKER_NAMESPACE:
+    description: "DOCKER NAMESPACE"
+    required: true
+  DOCKER_REGISTRY_IMAGE:
+    description: "DOCKER REGISTRY IMAGE"
+    required: true
+  VERSION:
+    description: "DOCKER REGISTRY IMAGE"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Dockerization"
+      if: ${{inputs.ENABLED=='true'}}
+      run: |
+        echo "⚙️ Build docker image with versions :${{inputs.VERSION}},latest "
+        docker login -u=${{inputs.DOCKER_USERNAME }} -p=${{ inputs.DOCKER_PASSWORD }}
+        docker build -t ${{inputs.DOCKER_NAMESPACE}}/${{inputs.DOCKER_REGISTRY_IMAGE }}:${{steps.versioning.outputs.VERSION}} -t ${{inputs.DOCKER_NAMESPACE}}/${{inputs.DOCKER_REGISTRY_IMAGE }}:latest .        
+        docker push ${{inputs.DOCKER_NAMESPACE}}/${{inputs.DOCKER_REGISTRY_IMAGE }}:${{inputs.VERSION}}
+        docker push ${{inputs.DOCKER_NAMESPACE}}/${{inputs.DOCKER_REGISTRY_IMAGE }}:latest 

@@ -1,0 +1,57 @@
+name: "Release"
+description: "Release"
+
+inputs:
+  ENABLED:
+    description: "Enable step"
+    required: false
+    default: "true"
+  VERSION_FILE:
+    description: "Versioning file"
+    required: false
+    default: "version.txt"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Release - increment version"
+      if: ${{inputs.ENABLED=='true'}}
+      id: versioning
+      run: |
+        echo "📁 Reading version from file : ${{inputs.VERSION_FILE}}"
+        VERSION=$(cat ${{inputs.VERSION_FILE}})
+        echo "📁 Current version: $VERSION"
+
+        # Split version: major.minor
+        IFS='.' read -r MAJOR MINOR <<< "$VERSION"
+
+        if [ "$MINOR" -lt 99 ]; then
+          NEW_MINOR=$((MINOR + 1))
+          NEW_MAJOR=$MAJOR
+        else
+          NEW_MINOR=0
+          NEW_MAJOR=$((MAJOR + 1))
+        fi
+
+        NEW_VERSION="$NEW_MAJOR.$NEW_MINOR"
+
+        echo "⚙️ New version: $NEW_VERSION"
+        echo "$NEW_VERSION" > version.txt
+        echo "VERSION=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+    - name: "Release - Commit changes"
+      if: ${{inputs.ENABLED=='true'}}
+      run: |
+        echo "⚙️ Committing changs ${{ steps.versioning.outputs.VERSION }}"
+        git config --global user.email "github-actions[bot]"
+        git config --global user.name "github-actions[bot]@users.noreply.github.com"
+        git add version.txt
+        git commit -m "Increment version to ${{ steps.versioning.outputs.VERSION }}"
+        git push 
+
+    - name: "Release - Push tag"
+      if: ${{inputs.ENABLED=='true'}}
+      run: |
+        echo "⚙️ Pushing tag v${{ steps.versioning.outputs.VERSION }}"
+        git tag v${{ steps.versioning.outputs.VERSION }}
+        git push origin v${{ steps.versioning.outputs.VERSION }}

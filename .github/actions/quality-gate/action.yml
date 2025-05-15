@@ -1,0 +1,50 @@
+name: "Integration Tests"
+description: "Integration Tests Step"
+
+inputs:
+  enabled:
+    description: "Enable step"
+    required: false
+    default: "true"
+  PROJECT_KEY :
+    description: "Sonar project key"
+    required: false
+    default: "seenibu_todos"
+  SONAR_TOKEN:
+    description: "SONAR TOKEN"
+    required: false
+    default: ${{ secrets.SONAR_TOKEN }}
+  SONAR_HOST:
+    description: "Sonar Host"
+    required: false
+    default: "https://sonarcloud.io"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Quality gate"
+      if: ${{inputs.enabled=='true'}}
+      env:
+        SONAR_TOKEN: ${{ inputs.SONAR_TOKEN }}
+      run: |
+        echo "🧪 Running quality gate ..."
+        mvn -B clean verify sonar:sonar -Dsonar.projectKey=${{inputs.PROJECT_KEY}}
+
+    - name: "Check Quality Gate"
+      if: ${{inputs.enabled=='true'}}
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: |
+        PROJECT_KEY=${{inputs.PROJECT_KEY}}
+        ANALYSIS_STATUS_URL="${{ inputs.SONAR_HOST }}/api/qualitygates/project_status?projectKey=$PROJECT_KEY"
+
+        echo "🔄 Waiting for Quality Gate to be ready ..."
+        sleep 5
+
+        STATUS=$(curl -s -u $SONAR_TOKEN: "$ANALYSIS_STATUS_URL" | jq -r '.projectStatus.status')
+
+        echo "Quality Gate Status : $STATUS"
+        if [ "$STATUS" != "OK" ]; then
+          echo "❌ Quality Gate failed, status = $STATUS !"
+          exit 1
+        fi
