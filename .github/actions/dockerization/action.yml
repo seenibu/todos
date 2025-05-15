@@ -35,7 +35,6 @@ runs:
       run: |
         echo "⚙️ Build docker image with versions :${{inputs.VERSION}},latest "
         docker login -u=${{inputs.DOCKER_USERNAME }} -p=${{ inputs.DOCKER_PASSWORD }}
-#        echo "${{ inputs.DOCKER_PASSWORD }}" | docker login -u "${{ inputs.DOCKER_USER }}" --password-stdin
         docker build -t ${{inputs.IMAGE_FULL_NAME}}:${{inputs.VERSION}} -t ${{inputs.IMAGE_FULL_NAME}}:latest .        
         docker push ${{inputs.IMAGE_FULL_NAME}}:${{inputs.VERSION}}
         docker push ${{inputs.IMAGE_FULL_NAME}}:latest
