@@ -17,6 +17,7 @@ runs:
     - name: "Release - increment version"
       if: ${{inputs.ENABLED=='true'}}
       id: versioning
+      shell: bash
       run: |
         echo "📁 Reading version from file : ${{inputs.VERSION_FILE}}"
         VERSION=$(cat ${{inputs.VERSION_FILE}})
@@ -41,6 +42,7 @@ runs:
 
     - name: "Release - Commit changes"
       if: ${{inputs.ENABLED=='true'}}
+      shell: bash
       run: |
         echo "⚙️ Committing changs ${{ steps.versioning.outputs.VERSION }}"
         git config --global user.email "github-actions[bot]"
@@ -55,3 +57,4 @@ runs:
         echo "⚙️ Pushing tag v${{ steps.versioning.outputs.VERSION }}"
         git tag v${{ steps.versioning.outputs.VERSION }}
         git push origin v${{ steps.versioning.outputs.VERSION }}
+      shell: bash

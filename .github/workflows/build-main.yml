@@ -30,10 +30,10 @@ jobs:
 
       - uses: ./.github/actions/setup-env
 
-#      - uses: ./.github/actions/dependency-scan
-#        with:
-#          ENABLED: "false"
-#          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+      - uses: ./.github/actions/dependency-scan
+        with:
+          ENABLED: "false"
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
 
       - uses: ./.github/actions/unit-tests
 

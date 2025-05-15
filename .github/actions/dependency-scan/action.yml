@@ -23,3 +23,4 @@ runs:
       env:
         NVD_API_KEY: ${{ inputs.NVD_API_KEY }}
       run: mvn org.owasp:dependency-check-maven:check -P${{ inputs.PROFILE}} -Ddata.directory=~/.dependency-check -Dnvd.api.key=${{ inputs.NVD_API_KEY }}
+      shell: bash

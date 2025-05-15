@@ -29,6 +29,7 @@ runs:
       run: |
         echo "🧪 Running quality gate ..."
         mvn -B clean verify sonar:sonar -Dsonar.projectKey=${{inputs.PROJECT_KEY}}
+      shell: bash
 
     - name: "Check Quality Gate"
       if: ${{inputs.enabled=='true'}}
@@ -48,3 +49,4 @@ runs:
           echo "❌ Quality Gate failed, status = $STATUS !"
           exit 1
         fi
+      shell: bash

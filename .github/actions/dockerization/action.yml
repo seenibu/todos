@@ -33,3 +33,4 @@ runs:
         docker build -t ${{inputs.DOCKER_NAMESPACE}}/${{inputs.DOCKER_REGISTRY_IMAGE }}:${{steps.versioning.outputs.VERSION}} -t ${{inputs.DOCKER_NAMESPACE}}/${{inputs.DOCKER_REGISTRY_IMAGE }}:latest .        
         docker push ${{inputs.DOCKER_NAMESPACE}}/${{inputs.DOCKER_REGISTRY_IMAGE }}:${{inputs.VERSION}}
         docker push ${{inputs.DOCKER_NAMESPACE}}/${{inputs.DOCKER_REGISTRY_IMAGE }}:latest 
+      shell: bash

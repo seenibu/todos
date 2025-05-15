@@ -19,3 +19,4 @@ runs:
       run: |
         echo "🧪 Run integration tests with profile ${{inputs.PROFILE}}"
         mvn test -P${{inputs.PROFILE}}
+      shell: bash
