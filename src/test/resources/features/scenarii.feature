@@ -41,7 +41,7 @@ Feature: Todo API
       | title 1 | description 1 | false      |
       | title 2 | description 2 | false      |
 
-  Scenario: delete an existing todo should return 204
+  Scenario: Delete an existing todo should return 204
     Given table todo contains data:
       |id                                  |title  |description  |completed  |
       |17a281a6-0882-4460-9d95-9c28f5852db1|title 1|description 1|false      |
@@ -49,7 +49,7 @@ Feature: Todo API
    When call delete with id="17a281a6-0882-4460-9d95-9c28f5852db1"
    Then the http status is 204
 
-  Scenario: delete an non existing todo should return 404
+  Scenario: Delete an non existing todo should return 404
     Given table todo contains data:
       |id                                  |title  |description  |completed   |
       |17a281a6-0882-4460-9d95-9c28f5852db1|title 1|description 1|false      |
@@ -57,7 +57,7 @@ Feature: Todo API
     When call delete with id="27a281a6-0882-4460-9d95-9c28f5852db1"
     Then the http status is 404
 
-  Scenario: complete an existing todo should return 202
+  Scenario: Complete an existing todo should return 202
     Given table todo contains data:
       |id                                  |title  |description  |completed  |
       |17a281a6-0882-4460-9d95-9c28f5852db1|title 1|description 1|false      |
@@ -66,14 +66,14 @@ Feature: Todo API
     Then the http status is 202
     And the completed todo has property completed="true"
 
-  Scenario: complete an non existing todo should return 404
+  Scenario: Complete an non existing todo should return 404
     Given table todo contains data:
       |id                                  |title  |description  |completed |
       |17a281a6-0882-4460-9d95-9c28f5852db1|title 1|description 1|false     |
     When call complete with id="27a281a6-0882-4460-9d95-9c28f5852db1"
     Then the http status is 404
 
-  Scenario Outline: add todo should return 201
+  Scenario Outline: Add todo should return 201
     Given table todo contains data:
       |id                                  |title  |description  |completed  |
       |17a281a6-0882-4460-9d95-9c28f5852db1|title 1|description 1|false      |
@@ -87,7 +87,7 @@ Feature: Todo API
       |title    |description    |completed  |
       |title 11 |description 11 |false      |
 
-  Scenario: add todo with an existing title should return 409
+  Scenario: Add todo with an existing title should return 409
     Given table todo contains data:
       |id                                  |title  |description  |completed |
       |17a281a6-0882-4460-9d95-9c28f5852db1|title 1|description 1|false     |
@@ -97,7 +97,7 @@ Feature: Todo API
     When call add todo
     Then the http status is 409
 
-  Scenario Outline: update an existing todo should return 202
+  Scenario Outline: Update an existing todo should return 202
     Given table todo contains data:
       |id                                  |title  |description  |completed |
       |17a281a6-0882-4460-9d95-9c28f5852db1|title 1|description 1|false     |
@@ -111,34 +111,32 @@ Feature: Todo API
       |id                                   |title     |description     |completed|
       |17a281a6-0882-4460-9d95-9c28f5852db1 |title 1.1 |description 1.1 | false   |
 
-  Scenario: update an non existing todo should return 404
+  Scenario: Update an non existing todo should return 404
     Given title = "title 1"
     And  description = "description 1"
     When call update todo with id="17a281a6-0882-4460-9d95-9c28f5852db1"
     Then the http status is 404
 
-  Scenario: add todo with title exceeding 80 characters should return 400
+  Scenario: Add todo with title exceeding 80 characters should return 400
     Given title contains 81 characters
     And description contains 255 characters
     When call add todo
     Then the http status is 400
 
-  Scenario: add todo with title less than 2 characters should return 400
+  Scenario: Add todo with title less than 2 characters should return 400
     Given title contains 1 characters
     And description contains 255 characters
     When call add todo
     Then the http status is 400
 
-  Scenario: add todo with description exceeding 255 characters should return 400
+  Scenario: Add todo with description exceeding 255 characters should return 400
     Given title contains 50 characters
     And description contains 256 characters
     When call add todo
     Then the http status is 400
 
 
-
-
-  Scenario: update todo with title exceeding 80 characters should return 400
+  Scenario: Update todo with title exceeding 80 characters should return 400
     Given table todo contains data:
       |id                                  |title  |description  |completed |
       |17a281a6-0882-4460-9d95-9c28f5852db1|title 1|description 1|false     |
@@ -147,7 +145,7 @@ Feature: Todo API
     When call update todo with id="17a281a6-0882-4460-9d95-9c28f5852db1"
     Then the http status is 400
 
-  Scenario: update todo with title less than 2 characters should return 400
+  Scenario: Update todo with title less than 2 characters should return 400
     Given table todo contains data:
       |id                                  |title  |description  |completed |
       |17a281a6-0882-4460-9d95-9c28f5852db1|title 1|description 1|false     |
@@ -156,7 +154,7 @@ Feature: Todo API
     When call update todo with id="17a281a6-0882-4460-9d95-9c28f5852db1"
     Then the http status is 400
 
-  Scenario: update todo with description exceeding 255 characters should return 400
+  Scenario: Update todo with description exceeding 255 characters should return 400
     Given table todo contains data:
       |id                                  |title  |description  |completed |
       |17a281a6-0882-4460-9d95-9c28f5852db1|title 1|description 1|false     |
