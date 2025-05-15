@@ -24,8 +24,11 @@ jobs:
       ENABLE_PUSH_TAG: false
 
     steps:
-#      - uses: ./.github/actions/setup-env
-      - uses: .github/actions/setup-env
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: ./.github/actions/setup-env
 
 #      - uses: actions/checkout@v3
 #        with:
