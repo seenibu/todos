@@ -10,44 +10,54 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      ROOT_ACTIONS: ./.github/actions
+     ENABLE_TESTS: true
+     ENABLE_DEPENDENCIES_SCAN: false
+     ENABLE_SONAR_SCAN: false
+     ENABLE_DEPLOY: false
+     ENABLE_PACKAGE: false
+     ENABLE_RELEASE: false
+     ENABLE_DOCKERIZATION: false
 
     steps:
       - uses: actions/checkout@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: ${{env.ROOT_ACTIONS}}/setup-env
+      - uses: ./.github/actions/setup-env
 
-      - uses: ${{env.ROOT_ACTIONS}}/dependency-scan
+      - uses: ./.github/actions/dependency-scan
         with:
-          ENABLED : "false"
+          ENABLED: ${{ env.ENABLE_DEPENDENCIES_SCAN }}
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
 
-      - uses: ${{env.ROOT_ACTIONS}}/tests
-
-      - uses: ${{env.ROOT_ACTIONS}}/quality-gate
+      - uses: ./.github/actions/tests
         with:
-          ENABLED : "false"
+          ENABLED: ${{ env.ENABLE_TESTS }}
+
+      - uses: ./.github/actions/quality-gate
+        with:
+          ENABLED: ${{ env.ENABLE_SONAR_SCAN }}
           PROJECT_KEY: "seenibu_todos"
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST: "https://sonarcloud.io"
 
-      - uses: ${{env.ROOT_ACTIONS}}/package
-
-      - uses: ${{env.ROOT_ACTIONS}}/release
-        id : release
+      - uses: ./.github/actions/package
         with:
-          ENABLED : "false"
+          ENABLED: ${{ env.ENABLE_PACKAGE }}
 
-      - uses: ${{env.ROOT_ACTIONS}}/dockerization
+      - uses: ./.github/actions/release
+        id: release
         with:
-          ENABLED : "false"
+          ENABLED: ${{ env.ENABLE_RELEASE }}
+
+      - uses: ./.github/actions/dockerization
+        with:
+          ENABLED: ${{ env.ENABLE_DOCKERIZATION }}
           DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           VERSION: ${{steps.release.outputs.VERSION}}
-          IMAGE_FULL_NAME:  ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE}}
+          IMAGE_FULL_NAME: ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE}}
 
-      - uses: ${{env.ROOT_ACTIONS}}/deploy
+      - uses: ./.github/actions/deploy
         with:
-          ENABLED : "false"
+          ENABLED: ${{ env.ENABLE_DEPLOY }}
