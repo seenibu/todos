@@ -17,7 +17,6 @@ runs:
     - name: "Release - increment version"
       if: ${{inputs.ENABLED=='true'}}
       id: versioning
-      shell: bash
       run: |
         echo "📁 Reading version from file : ${{inputs.VERSION_FILE}}"
         VERSION=$(cat ${{inputs.VERSION_FILE}})
@@ -39,17 +38,18 @@ runs:
         echo "⚙️ New version: $NEW_VERSION"
         echo "$NEW_VERSION" > version.txt
         echo "VERSION=$NEW_VERSION" >> $GITHUB_OUTPUT
+      shell: bash
 
     - name: "Release - Commit changes"
       if: ${{inputs.ENABLED=='true'}}
-      shell: bash
       run: |
         echo "⚙️ Committing changs ${{ steps.versioning.outputs.VERSION }}"
         git config --global user.email "github-actions[bot]"
         git config --global user.name "github-actions[bot]@users.noreply.github.com"
         git add version.txt
         git commit -m "Increment version to ${{ steps.versioning.outputs.VERSION }}"
-        git push 
+        git push
+      shell: bash
 
     - name: "Release - Push tag"
       if: ${{inputs.ENABLED=='true'}}
