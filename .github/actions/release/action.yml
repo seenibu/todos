@@ -27,9 +27,10 @@ runs:
         VERSION=$(cat ${{inputs.VERSION_FILE}})
         echo "📁 Current version: $VERSION"
 
-        # Split version: major.minor
+        # Split version in the format: major.minor
         IFS='.' read -r MAJOR MINOR <<< "$VERSION"
 
+        # increment version
         if [ "$MINOR" -lt 99 ]; then
           NEW_MINOR=$((MINOR + 1))
           NEW_MAJOR=$MAJOR
@@ -41,8 +42,8 @@ runs:
         NEW_VERSION="$NEW_MAJOR.$NEW_MINOR"
 
         echo "⚙️ New version: $NEW_VERSION"
-        git pull
         echo "$NEW_VERSION" > version.txt
+        #add current version to output
         echo "VERSION=$NEW_VERSION" >> $GITHUB_OUTPUT
       shell: bash
 
