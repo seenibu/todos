@@ -40,12 +40,14 @@ runs:
         echo "🔄 Waiting for Quality Gate to be ready ..."
         sleep 5
 
-        STATUS=$(curl -s -u ${{inputs.PROJECT_KEY}}: "$ANALYSIS_STATUS_URL" | jq -r '.projectStatus.status')
+        STATUS=$(curl -s -u ${{inputs.SONAR_TOKEN}}: "$ANALYSIS_STATUS_URL" | jq -r '.projectStatus.status')
 
         echo "Quality Gate Status : $STATUS"
         if [ "$STATUS" != "OK" ]; then
           echo "❌ Quality Gate failed, status = $STATUS !"
           exit 1
         fi
+        echo "***************************************************************"
         echo "🚀🔸🔹👉 Find analysis result at : $ANALYSIS_STATUS_URL"
+        echo "***************************************************************"
       shell: bash
