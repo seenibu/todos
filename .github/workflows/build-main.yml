@@ -50,7 +50,7 @@ jobs:
           DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           DOCKER_NAMESPACE: ${{secrets.DOCKER_NAMESPACE}}
-          DOCKER_REGISTRY_IMAGE: {{secrets.DOCKER_REGISTRY_IMAGE }}
+          DOCKER_REGISTRY_IMAGE: ${{secrets.DOCKER_REGISTRY_IMAGE }}
           VERSION: ${{steps.versioning.outputs.VERSION}}
 
       - uses: ./.github/actions/deploy
