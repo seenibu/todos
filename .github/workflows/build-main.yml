@@ -25,7 +25,7 @@ jobs:
 
     steps:
 #      - uses: ./.github/actions/setup-env
-      - uses: .github/actions/setup-env/action.yml
+      - uses: .github/actions/setup-env
 
 #      - uses: actions/checkout@v3
 #        with:
