@@ -41,6 +41,7 @@ runs:
         NEW_VERSION="$NEW_MAJOR.$NEW_MINOR"
 
         echo "⚙️ New version: $NEW_VERSION"
+        git pull
         echo "$NEW_VERSION" > version.txt
         echo "VERSION=$NEW_VERSION" >> $GITHUB_OUTPUT
       shell: bash
