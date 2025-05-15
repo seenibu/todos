@@ -5,7 +5,7 @@ inputs:
   ENABLED:
     description: "Enable step"
     required: false
-    default: "false"
+    default: "true"
   PROFILE:
     description: "Active profile"
     required: false

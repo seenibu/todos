@@ -17,6 +17,7 @@ runs:
       run: |
         echo "🚀 Step will be ready soon .. "
       shell: bash
+
     - name: "Wait for deploy to finish"
       if: ${{inputs.ENABLED=='true'}}
       uses: jakejarvis/wait-action@master

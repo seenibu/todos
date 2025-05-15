@@ -12,20 +12,12 @@ inputs:
   DOCKER_PASSWORD:
     description: "DOCKER PASSWORD"
     required: true
-#  DOCKER_NAMESPACE:
-#    description: "DOCKER NAMESPACE"
-#    required: true
-#  DOCKER_REGISTRY_IMAGE:
-#    description: "DOCKER REGISTRY IMAGE"
-#    required: true
   VERSION:
     description: "DOCKER REGISTRY IMAGE"
     required: true
   IMAGE_FULL_NAME:
     description: "At the form: Username/image-name"
     required: true
-
-
 
 runs:
   using: "composite"
