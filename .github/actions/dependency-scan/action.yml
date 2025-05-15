@@ -5,15 +5,14 @@ inputs:
   ENABLED:
     description: "Enable step"
     required: false
-    default: "true"
+    default: "false"
   PROFILE:
     description: "Active profile"
     required: false
     default: "cve"
   NVD_API_KEY:
     description: "NVD API KEY"
-    required: false
-    default: ${{ secrets.NVD_API_KEY }}
+    required: true
 
 
 runs:

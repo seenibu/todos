@@ -32,7 +32,7 @@ jobs:
 
       - uses: ./.github/actions/dependency-scan
         with:
-          enabled: "false"
+          ENABLED: "false"
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
 
       - uses: ./.github/actions/unit-tests
