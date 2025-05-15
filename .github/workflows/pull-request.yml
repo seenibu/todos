@@ -2,9 +2,9 @@ name: Pull Request
 on:
   pull_request:
 #    types: [opened, synchronize, reopened]
-     branches:
-       - DIC1-*
-       - IS-*
+#     branches:
+#       - DIC1-*
+#       - IS-*
 
 
 jobs:
