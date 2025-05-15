@@ -24,7 +24,8 @@ jobs:
       ENABLE_PUSH_TAG: false
 
     steps:
-      - uses: ./.github/actions/setup-env
+#      - uses: ./.github/actions/setup-env
+      - uses: .github/actions/setup-env/action.yml
 
 #      - uses: actions/checkout@v3
 #        with:
