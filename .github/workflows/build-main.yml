@@ -1,8 +1,9 @@
-name: Build Main Brachn
+name: Build Main Branch
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
   build:
@@ -11,16 +12,16 @@ jobs:
     env:
       ENABLE_TESTS: true
       ENABLE_DEPENDENCIES_SCAN: false
-      ENABLE_SONAR_SCAN: true
-      ENABLE_SONAR_CHECK_SCAN: true
-      ENABLE_DOCKER_BUILD_AND_PUSH_IMAGE: true
-      ENABLE_DEPLOY: true
-      ENABLE_WAIT_DEPLOY: true
-      ENABLE_CHECK_DEPLOY: true
-      ENABLE_PACKAGE: true
-      ENABLE_INCREMENT_VERSION: true
-      ENABLE_COMMIT_INCREMENT_VERSION: true
-      ENABLE_PUSH_TAG: true
+      ENABLE_SONAR_SCAN: false
+      ENABLE_SONAR_CHECK_SCAN: false
+      ENABLE_DOCKER_BUILD_AND_PUSH_IMAGE: false
+      ENABLE_DEPLOY: false
+      ENABLE_WAIT_DEPLOY: false
+      ENABLE_CHECK_DEPLOY: false
+      ENABLE_PACKAGE: false
+      ENABLE_INCREMENT_VERSION: false
+      ENABLE_COMMIT_INCREMENT_VERSION: false
+      ENABLE_PUSH_TAG: false
 
     steps:
       - uses: actions/checkout@v3
