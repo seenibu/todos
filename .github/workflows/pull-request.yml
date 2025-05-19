@@ -22,12 +22,17 @@ jobs:
 
       - uses: ./.github/actions/setup-env
 
-      - name: Run Gitleaks
-        uses: gitleaks/gitleaks-action@v2
-        with:
-          config-path: "" # Utilise la config par défaut
-          fail: true      # Échoue le job si des secrets sont trouvés
+      - name: Run Gitleaks and save report
+        run: |
+          curl -sSL https://github.com/gitleaks/gitleaks/releases/latest/download/gitleaks-linux-amd64 -o gitleaks
+          chmod +x gitleaks
+          ./gitleaks detect --source . --report-format json --report-path gitleaks-report.json --exit-code 1
 
+      - name: Upload Gitleaks report as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gitleaks-report
+          path: gitleaks-report.json
 
       - uses: ./.github/actions/dependency-scan
         with:
