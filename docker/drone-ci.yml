@@ -18,7 +18,7 @@ services:
      DRONE_USER_CREATE: username:seenibu,admin:true
      DRONE_AGENTS_ENABLED: true
   #    env_file:
-#      - docker-compose-secret.env
+#      - docker-compose-secrets.env
 
   drone-runner:
     image: drone/drone-runner-docker:1
@@ -35,7 +35,7 @@ services:
       DRONE_RUNNER_CAPACITY: 2
       DRONE_RUNNER_NAME: drone-runner
 #    env_file:
-#      - docker-compose-secret.env
+#      - docker-compose-secrets.env
 
 volumes:
   drone-server-data:
