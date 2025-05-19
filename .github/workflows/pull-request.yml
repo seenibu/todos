@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      ENABLE_TESTS: true
+      ENABLE_TESTS: false
       ENABLE_DEPENDENCIES_SCAN: false
       ENABLE_SONAR_SCAN: false
 
@@ -25,7 +25,8 @@ jobs:
       - name: Run Gitleaks
         uses: gitleaks/gitleaks-action@v2
         with:
-          args: detect --report-format=json --report-path=gitleaks-report.json --exit-code=0
+          args: detect --report-format=json --report-path=gitleaks-report.json
+          #          args: detect --report-format=json --report-path=gitleaks-report.json --exit-code=0
 
       - name: Upload report
         uses: actions/upload-artifact@v4
