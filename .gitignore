@@ -179,3 +179,4 @@ docker/drone-ci.yml
 /donnes_secretes.txt
 /docker/docker-compose-secrets.env
 /docker/docker-secrets.env
+/docker/drone.yml
