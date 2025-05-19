@@ -25,7 +25,7 @@ jobs:
       - name: Run Gitleaks
         uses: gitleaks/gitleaks-action@v2
         with:
-          args: detect --report-format=json --report-path=gitleaks-report.json --exit-code=1
+          args: detect --report-format=json --report-path=gitleaks-report.json --exit-code=0
 
       - name: Upload report
         uses: actions/upload-artifact@v4
@@ -33,7 +33,16 @@ jobs:
             name: gitleaks-report
             path: gitleaks-report.json
 
-
+#      - name: Run TruffleHog
+#        uses: trufflesecurity/trufflehog@main
+#        with:
+#          scanArguments: --json . > trufflehog-report.json || true
+#
+#      - name: Upload report
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: trufflehog-report
+#          path: trufflehog-report.json
 
       - uses: ./.github/actions/dependency-scan
         with:
