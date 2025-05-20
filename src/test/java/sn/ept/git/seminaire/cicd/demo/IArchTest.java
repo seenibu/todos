@@ -14,7 +14,7 @@ class IArchTest {
     public static final String SERVICES = BASE.concat(".services..");
     public static final String SERVICES_IMPL = BASE.concat(".services.impl..");
     public static final String REPOSITORY = BASE.concat(".repositories..");
-    public static final String MODELS = BASE.concat(".models..");
+    public static final String ENTITIES = BASE.concat(".entities..");
     public static final String COMPONENTS = BASE.concat(".component..");
     public static final String RESOURCE = BASE.concat(".resources..");
     static JavaClasses importedClasses;
@@ -64,7 +64,7 @@ class IArchTest {
                 .should()
                 .dependOnClassesThat()
                 .resideInAnyPackage(SERVICES_IMPL)
-                .because("Resources should use Interface in  Service layer")
+                .because("Resources should use Interface in  Service layer instead of concrete classes")
                 .check(importedClasses);
     }
 
@@ -92,9 +92,6 @@ class IArchTest {
                 .because("Service Interfaces should not be inside service.impl package")
                 .check(importedClasses);
     }
-
-
-
 
     @Test
     void servicesClassesShouldNotBeDirectlyInServicePackage() {
@@ -171,7 +168,7 @@ class IArchTest {
                 .that()
                 .areAnnotatedWith(jakarta.persistence.Entity.class)
                 .should()
-                .resideInAnyPackage(MODELS)
+                .resideInAnyPackage(ENTITIES)
                 .because("Only entities should be annotated with @Entity")
                 .check(importedClasses);
     }
@@ -182,13 +179,10 @@ class IArchTest {
                 .that()
                 .areAnnotatedWith(jakarta.persistence.Table.class)
                 .should()
-                .resideInAnyPackage(MODELS)
+                .resideInAnyPackage(ENTITIES)
                 .because("Only entities should be annotated with @Table")
                 .check(importedClasses);
     }
-
-
-
 
 
 }

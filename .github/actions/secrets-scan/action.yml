@@ -16,5 +16,4 @@ runs:
 #     env:
 #       GITLEAKS_NOTIFY_USER_LIST: senei@ept.sn
 #     with:
-#       args: detect --source=. --report-format=sarif --report-path=gitleaks-report.sarif  --exit-code=0
-#       args: detect --source=. --redact --report-format=sarif --report-path=gitleaks-report.sarif  --exit-code=0
+#       args: detect --source=. --redact --report-format=sarif --report-path=gitleaks-report.sarif  --exit-code=1

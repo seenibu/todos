@@ -11,12 +11,13 @@ jobs:
 
     env:
      ENABLE_TESTS: true
+     ENABLE_SECRETS_SCAN: true
      ENABLE_DEPENDENCIES_SCAN: false
-     ENABLE_SONAR_SCAN: false
+     ENABLE_SONAR_SCAN: true
      ENABLE_DEPLOY: false
-     ENABLE_PACKAGE: false
-     ENABLE_RELEASE: false
-     ENABLE_DOCKERIZATION: false
+     ENABLE_PACKAGE: true
+     ENABLE_RELEASE: true
+     ENABLE_DOCKERIZATION: true
 
     steps:
       - uses: actions/checkout@v3
@@ -24,6 +25,10 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: ./.github/actions/setup-env
+
+      - uses: ./.github/actions/secrets-scan
+        with:
+          ENABLED: ${{ env.ENABLE_SECRETS_SCAN }}
 
       - uses: ./.github/actions/dependency-scan
         with:
