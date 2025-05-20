@@ -1,0 +1,19 @@
+name: "Secrets Scan"
+description: "Secrets Scan Step"
+
+inputs:
+  ENABLED:
+    description: "Enable step"
+    required: false
+    default: "true"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Secrets Scan
+      if: ${{inputs.ENABLED=='true'}}
+      uses: gitleaks/gitleaks-action@v2
+#     env:
+#       GITLEAKS_NOTIFY_USER_LIST: senei@ept.sn
+#     with:
+#       args: detect --source=. --redact --report-format=sarif --report-path=gitleaks-report.sarif  --exit-code=1
