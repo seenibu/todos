@@ -52,9 +52,6 @@
         <sonar.exclusions>${sonar-ignore}</sonar.exclusions>
         <sonar.coverage.exclusions>${sonar-ignore}</sonar.coverage.exclusions>
 
-
-
-
         <groovy-xml.version>4.0.12</groovy-xml.version>
         <rest-assured.version>5.2.1</rest-assured.version>
         <jacoco.version>0.8.11</jacoco.version>
