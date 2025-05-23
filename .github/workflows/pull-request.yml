@@ -56,6 +56,7 @@ jobs:
         with:
           scan-type: image
           image-ref: my-app:latest
-          format: table
+          format: json #json,xml,table
           exit-code: 1 # échoue si vulnérabilités trouvées
-          severity: CRITICAL,HIGH
+          severity: CRITICAL,HIGH #unknown, low,medium, high, critical
+          ignore-unfixed: true #ignore celles qui n'ont pas de correctifs
