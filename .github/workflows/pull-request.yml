@@ -1,9 +1,9 @@
 name: Pull Request
 on:
   push:
-     branches:
-       - 'DIC1-*'
-       - 'IS-*'
+    branches:
+      - 'DIC1-*'
+      - 'IS-*'
 
 
 jobs:
@@ -42,3 +42,18 @@ jobs:
           PROJECT_KEY: "seenibu_todos"
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST: "https://sonarcloud.io"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        run: docker build -t my-app:latest .
+
+      - name: Install Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: image
+          image-ref: my-app:latest
+          format: table
+          exit-code: 1 # échoue si vulnérabilités trouvées
+          severity: CRITICAL,HIGH
