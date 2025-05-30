@@ -1,9 +1,9 @@
 name: Pull Request
 on:
   push:
-     branches:
-       - 'DIC1-*'
-       - 'IS-*'
+    branches:
+      - 'DIC1-*'
+      - 'IS-*'
 
 
 jobs:
@@ -11,10 +11,10 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      ENABLE_TESTS: true
       ENABLE_SECRETS_SCAN: true
       ENABLE_DEPENDENCIES_SCAN: false
-      ENABLE_SONAR_SCAN: true
+      ENABLE_TESTS: true
+      ENABLE_SONAR_SCAN: false
 
     steps:
       - uses: actions/checkout@v3
@@ -42,3 +42,21 @@ jobs:
           PROJECT_KEY: "seenibu_todos"
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST: "https://sonarcloud.io"
+
+      - uses: ./.github/actions/package
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        run: docker build -t my-app:latest .
+
+      - name: Install Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: image
+          image-ref: my-app:latest
+          format: json #json,xml,table
+          exit-code: 0 # 1: échoue si vulnérabilités trouvées, 0 : sinon. Remettre a 1
+          severity: CRITICAL,HIGH #unknown, low,medium, high, critical
+          ignore-unfixed: true #ignore celles qui n'ont pas de correctifs

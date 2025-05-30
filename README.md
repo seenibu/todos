@@ -27,6 +27,14 @@ mvn spring-boot:run
 ## Acces to endpoints
 http://localhost:8080/cicd/api/todos
 
+## Code erreurs ZAP
+0	✅ Succès. Aucun problème critique trouvé, ou scan réussi sans erreurs.
+1	⚠️ Avertissements détectés (en fonction du fichier de config utilisé ou des règles par défaut).
+2	⚠️ Erreurs détectées, par exemple vulnérabilités sévères.
+3	❌ Erreur fatale (ex : cible inaccessible, erreur d’argument, problème d’environnement, etc.).
+
+## Option -a ZAP
+Active aussi les règles Alpha, qui sont expérimentales mais peuvent détecter des failles supplémentaires. Cela augmente la couverture, mais aussi le risque de faux positifs.
 
 ## Contact
 

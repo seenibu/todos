@@ -1,0 +1,29 @@
+services:
+
+
+  app:
+    build:
+      context: .
+    container_name: spring-app
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/cicd/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  zap:
+    image:  zaproxy/zap-stable
+    container_name: zap-scanner
+    depends_on:
+      app:
+        condition: service_healthy
+    volumes:
+      - ./zap-output:/zap/wrk
+    command: >
+      zap-full-scan.py
+      -t http://app:8080/cicd/actuator/health
+      -r zap-report.html
+      -J zap-report.json
+      -a 
