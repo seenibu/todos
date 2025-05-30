@@ -18,7 +18,7 @@ jobs:
      ENABLE_RELEASE: false
      ENABLE_DOCKERIZATION: false
      ENABLE_DEPLOY: false
-     ENABLE_DAST: false
+     ENABLE_DAST: true
 
     steps:
       - uses: actions/checkout@v3
