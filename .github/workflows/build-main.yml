@@ -68,6 +68,6 @@ jobs:
         with:
           ENABLED: ${{ env.ENABLE_DEPLOY }}
 
-      - uses: ./.github/actions/dast
+      - uses: ./.github/actions/dast-in-docker
         with:
           ENABLED: ${{ env.ENABLE_DAST }}
