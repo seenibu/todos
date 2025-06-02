@@ -7,9 +7,9 @@ import lombok.experimental.UtilityClass;
  */
 @UtilityClass
 public final class Constantes {
-    public final String SYSTEM_NAME ="TODOS-MS";
-    public final String SYSTEM_ID ="MS_be7e84a8-9f56-405b-a15a-2646a8012c89";
-    public final String TYPE_VALIDATION="TYPE_VALIDATION";
-    public final String TYPE_SYSTEM="TYPE_SYSTEM";
-    public final String TYPE_PERMISSION="TYPE_PERMISSION";
+    public final String SYSTEM_NAME ="MS-TODOS";
+    public final String SYSTEM_ID ="be7e84a8-9f56-405b-a15a-2646a8012c89";
+    public final String TYPE_VALIDATION="VALIDATION";
+    public final String TYPE_SYSTEM="SYSTEM";
+    public final String TYPE_PERMISSION="PERMISSION";
 }

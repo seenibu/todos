@@ -3,10 +3,11 @@ package sn.ept.git.seminaire.cicd.resources;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import sn.ept.git.seminaire.cicd.models.TodoDTO;
-import sn.ept.git.seminaire.cicd.services.ITodoService;
+import sn.ept.git.seminaire.cicd.services.TodoService;
 import sn.ept.git.seminaire.cicd.utils.LogUtils;
 import sn.ept.git.seminaire.cicd.utils.ResponseUtil;
 import sn.ept.git.seminaire.cicd.utils.UrlMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import jakarta.validation.Valid;
+import sn.ept.git.seminaire.cicd.utils.ValidatonUtils;
 
 import java.net.URI;
 import java.util.Optional;
@@ -26,21 +28,23 @@ import java.util.Optional;
 public class TodoResource {
 
     public static final String CLASS_NAME="TodoResource";
-    private final ITodoService service;
+    private final TodoService service;
 
     @GetMapping(UrlMapping.Todo.ALL)
     public ResponseEntity<Page<TodoDTO>> findAll(
-            @PageableDefault Pageable page
+            @RequestParam(defaultValue = "0")  int page,
+            @RequestParam(defaultValue = "10") int size
     ) {
         log.info(LogUtils.LOG_START,CLASS_NAME, "findAll");
-        Page<TodoDTO> result = service.findAll(page);
-        return ResponseEntity.ok().body(result);
+        ValidatonUtils.validatePageMeta(page, size);
+        Page<TodoDTO> result = service.findAll(PageRequest.of(page, size));
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping(UrlMapping.Todo.FIND_BY_ID)
     public ResponseEntity<TodoDTO> findById(@PathVariable ("id") String id) {
         log.info(LogUtils.LOG_START,CLASS_NAME, "findById");
-        return ResponseUtil.wrapOrNotFound(service.findById(id),HttpStatus.OK);
+        return ResponseEntity.ok(service.findById(id));
     }
 
     @PostMapping(UrlMapping.Todo.ADD)
@@ -55,6 +59,15 @@ public class TodoResource {
         return ResponseEntity.created(location).body(created);
     }
 
+    @PutMapping(UrlMapping.Todo.UPDATE)
+    public ResponseEntity<TodoDTO> update(
+            @PathVariable("id") String id,
+            @RequestBody @Valid TodoDTO dto) {
+        log.info(LogUtils.LOG_START,CLASS_NAME, "update");
+        final TodoDTO updateDTO = service.update(id, dto);
+        return ResponseEntity.accepted().body(updateDTO);
+    }
+
     @DeleteMapping(UrlMapping.Todo.DELETE)
     public ResponseEntity<TodoDTO> delete(@PathVariable("id") String id) {
         log.info(LogUtils.LOG_START,CLASS_NAME, "delete");
@@ -62,20 +75,10 @@ public class TodoResource {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping(UrlMapping.Todo.UPDATE)
-    public ResponseEntity<TodoDTO> update(
-            @PathVariable("id") String id,
-            @RequestBody @Valid TodoDTO dto) {
-        log.info(LogUtils.LOG_START,CLASS_NAME, "update");
-        final TodoDTO updateDTO = service.update(id, dto);
-        Optional<TodoDTO> optional = Optional.ofNullable(updateDTO);
-        return ResponseUtil.wrapOrNotFound(optional,HttpStatus.ACCEPTED);
-    }
-
     @GetMapping(UrlMapping.Todo.COMPLETE)
     public ResponseEntity<TodoDTO> complete(@PathVariable("id") String id) {
         log.info(LogUtils.LOG_START,CLASS_NAME, "complete");
         final TodoDTO dto = service.complete(id);
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(dto),HttpStatus.ACCEPTED);
+        return ResponseEntity.accepted().body(dto);
     }
 }

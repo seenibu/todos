@@ -1,15 +1,15 @@
 package sn.ept.git.seminaire.cicd.entities;
 
+import jakarta.validation.constraints.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 import sn.ept.git.seminaire.cicd.utils.SizeMapping;
 import lombok.experimental.SuperBuilder;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,13 +27,20 @@ public final class Todo extends BaseEntity implements Serializable {
 
     @NotBlank
     @Size(min = SizeMapping.Title.MIN, max = SizeMapping.Title.MAX)
-    @Column(unique = true)
     private String title;
 
     @Size(min = SizeMapping.Description.MIN, max = SizeMapping.Description.MAX)
     private String description;
 
     private boolean completed;
+
+    @NotNull
+    @Future
+    private LocalDateTime dateDebut;
+
+    @NotNull
+    @Future
+    private LocalDateTime dateFin;
 
     @ToString.Exclude
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})

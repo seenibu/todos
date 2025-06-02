@@ -1,7 +1,6 @@
 package sn.ept.git.seminaire.cicd.services;
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,8 +14,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
-import sn.ept.git.seminaire.cicd.data.TestData;
-import sn.ept.git.seminaire.cicd.data.TodoDTOTestData;
 import sn.ept.git.seminaire.cicd.data.TodoTestData;
 import sn.ept.git.seminaire.cicd.models.TodoDTO;
 import sn.ept.git.seminaire.cicd.exceptions.ItemExistsException;
@@ -24,9 +21,7 @@ import sn.ept.git.seminaire.cicd.exceptions.ItemNotFoundException;
 import sn.ept.git.seminaire.cicd.mappers.TodoMapper;
 import sn.ept.git.seminaire.cicd.entities.Todo;
 import sn.ept.git.seminaire.cicd.repositories.TodoRepository;
-import sn.ept.git.seminaire.cicd.services.impl.TodoServiceImpl;
 
-import java.time.Instant;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,9 +35,9 @@ class TodoServiceTest {
     @Mock
     TodoRepository todoRepository;
     @InjectMocks
-    TodoServiceImpl service;
+    TodoService service;
 
-    private static TodoMapper  mapper = Mappers.getMapper(TodoMapper.class);
+    private static TodoMapper mapper = Mappers.getMapper(TodoMapper.class);
 
     Todo todo;
     TodoDTO dto;
@@ -63,19 +58,10 @@ class TodoServiceTest {
     void save_shouldSaveTodo() {
         Mockito.when(todoRepository.saveAndFlush(Mockito.any()))
                 .thenReturn(todo);
-        Mockito.when(todoRepository.findByTitle(Mockito.any()))
-                .thenReturn(Optional.empty());
         dto = service.save(dto);
         assertThat(dto)
                 .isNotNull()
                 .hasNoNullFieldsOrPropertiesExcept("tags");
-    }
-
-    @Test
-    void save_withSameTitle_shouldThrowException() {
-        Mockito.when(todoRepository.findByTitle(Mockito.any()))
-                .thenReturn(Optional.ofNullable(todo));
-        assertThrows(ItemExistsException.class, () -> service.save(dto));
     }
 
 
@@ -85,8 +71,6 @@ class TodoServiceTest {
         dto.setDescription(newDescription);
         Mockito.when(todoRepository.findById(Mockito.anyString()))
                 .thenReturn(Optional.ofNullable(todo));
-        Mockito.when(todoRepository.findByTitleWithIdNotEquals(Mockito.anyString(), Mockito.anyString()))
-                .thenReturn(Optional.empty());
         dto = service.update(dto.getId(), dto);
         assertThat(todo)
                 .isNotNull()
@@ -105,29 +89,6 @@ class TodoServiceTest {
         );
     }
 
-    @Test
-    void update_withDuplicatedTitle_shouldThrowException() {
-        Mockito.when(todoRepository.findById(Mockito.anyString()))
-                .thenReturn(Optional.ofNullable(todo));
-        Mockito.when(todoRepository.findByTitleWithIdNotEquals(Mockito.anyString(), Mockito.anyString()))
-                .thenReturn(Optional.ofNullable(todo));
-        assertThrows(
-                ItemExistsException.class,
-                () -> service.update(dto.getId(), dto)
-        );
-    }
-
-
-    @Test
-    void findAll_shouldReturnResult() {
-        Mockito.when(todoRepository.findAll())
-                .thenReturn(List.of(todo));
-        final List<TodoDTO> all = service.findAll();
-        assertThat(all)
-                .isNotNull()
-                .isNotEmpty()
-                .hasSize(1);
-    }
 
     @Test
     void findAllPageable_shouldReturnResult() {
@@ -150,11 +111,9 @@ class TodoServiceTest {
     void findById_shouldReturnResult() {
         Mockito.when(todoRepository.findById(Mockito.anyString()))
                 .thenReturn(Optional.ofNullable(todo));
-        final Optional<TodoDTO> optional = service.findById(todo.getId());
-        assertThat(optional)
+        dto = service.findById(todo.getId());
+        assertThat(dto)
                 .isNotNull()
-                .isPresent()
-                .get()
                 .hasNoNullFieldsOrPropertiesExcept("tags");
     }
 
@@ -162,10 +121,10 @@ class TodoServiceTest {
     void findById_withBadId_ShouldReturnNoResult() {
         Mockito.when(todoRepository.findById(Mockito.anyString()))
                 .thenReturn(Optional.empty());
-        final Optional<TodoDTO> optional = service.findById(UUID.randomUUID().toString());
-        assertThat(optional)
-                .isNotNull()
-                .isNotPresent();
+        assertThrows(
+                ItemNotFoundException.class,
+                () -> service.findById(UUID.randomUUID().toString())
+        );
     }
 
     @Test

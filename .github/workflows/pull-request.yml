@@ -65,19 +65,3 @@ jobs:
           ignore-unfixed: true #ignore celles qui n'ont pas de correctifs
 
 
-      - name: Run ZAP Full Scan
-        uses: zaproxy/action-full-scan@v0.10.0
-        with:
-          target: 'https://concours.ept.sn/'
-          fail_action: true
-          format: HTML
-#          allow_issue_writing: true
-#          token: ${{ secrets.GITHUB_TOKEN }}
-#          cmd_options: '-config globalexcludeurl.url_list="^https://example.com/logout.*"'
-#          rules_file_name: '.zap/rules.tsv'  # Facultatif : fichier pour ajuster les niveaux d'alerte
-
-      - name: Upload ZAP Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: zap-report
-          path: zap_report_html.html

@@ -9,13 +9,4 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface TodoRepository extends JpaRepository<Todo, String> {
-
-    @Query("select s from Todo  s where s.title=:title")
-    Optional<Todo> findByTitle(@Param("title") String title);
-
-    @Query("select s from Todo  s where s.title=:title and s.id<>:id")
-    Optional<Todo> findByTitleWithIdNotEquals(@Param("title") String title, @Param("id")  String id);
-
-
-}
+public interface TodoRepository extends JpaRepository<Todo, String> { }

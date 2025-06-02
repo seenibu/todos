@@ -12,7 +12,6 @@ public final class TagDTOTestData extends TestData {
                 .lastModifiedDate(Default.lastModifiedDate)
                 .version(Default.version)
                 .name(Default.name)
-                .description(Default.description)
                 .build();
     }
 
@@ -24,7 +23,6 @@ public final class TagDTOTestData extends TestData {
                 .lastModifiedDate(Update.lastModifiedDate)
                 .version(Update.version)
                 .name(Update.name)
-                .description(Update.description)
                 .build();
     }
 }

@@ -17,7 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import sn.ept.git.seminaire.cicd.data.TodoDTOTestData;
 import sn.ept.git.seminaire.cicd.models.TodoDTO;
 import sn.ept.git.seminaire.cicd.exceptions.ItemNotFoundException;
-import sn.ept.git.seminaire.cicd.services.impl.TodoServiceImpl;
+import sn.ept.git.seminaire.cicd.services.TodoService;
 import sn.ept.git.seminaire.cicd.utils.TestUtil;
 import sn.ept.git.seminaire.cicd.utils.UrlMapping;
 
@@ -37,7 +37,7 @@ class TodoResourceTest {
     protected MockMvc mockMvc;
 
     @MockBean
-    private TodoServiceImpl service;
+    private TodoService service;
 
     @Autowired
     private TodoResource todoResource;
@@ -88,7 +88,7 @@ class TodoResourceTest {
     @Test
     void findById_shouldReturnTodo() {
         Mockito.when(service.findById(Mockito.eq(dto.getId())))
-                .thenReturn(Optional.ofNullable(dto));
+                .thenReturn(dto);
         mockMvc.perform(get(UrlMapping.Todo.FIND_BY_ID,
                         dto.getId())
                         .accept(MediaType.APPLICATION_JSON))
@@ -104,7 +104,7 @@ class TodoResourceTest {
     @Test
     void findById_withBadId_shouldReturnNotFound() {
         Mockito.when(service.findById(Mockito.anyString()))
-                .thenReturn(Optional.empty());
+                .thenThrow(new ItemNotFoundException());
         mockMvc.perform(get(UrlMapping.Todo.FIND_BY_ID, UUID.randomUUID().toString())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
@@ -114,14 +114,11 @@ class TodoResourceTest {
     @Test
     void add_shouldCreateTodo() {
         Mockito.when(service.save(Mockito.any(TodoDTO.class)))
-                .thenReturn(
-                        dto);
-        mockMvc.perform(
-                        post(UrlMapping.Todo.ADD)
+                .thenReturn(dto);
+        mockMvc.perform(post(UrlMapping.Todo.ADD)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(TestUtil.convertObjectToJsonBytes(dto))
-                )
-                .andExpect(status().isCreated())
+                ).andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.version").exists())
                 .andExpect(jsonPath("$.title").value(dto.getTitle()))

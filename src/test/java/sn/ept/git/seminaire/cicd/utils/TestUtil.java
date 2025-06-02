@@ -37,7 +37,6 @@ public final class TestUtil {
         return TagDTO.builder()
                 .id(tag.getId())
                 .name(tag.getName())
-                .description(tag.getDescription())
                 .version(tag.getVersion())
                 .createdDate(tag.getCreatedDate())
                 .lastModifiedDate(tag.getLastModifiedDate())
@@ -48,7 +47,6 @@ public final class TestUtil {
         return Tag.builder()
                 .id(dto.getId())
                 .name(dto.getName())
-                .description(dto.getDescription())
                 .version(dto.getVersion())
                 .createdDate(dto.getCreatedDate())
                 .lastModifiedDate(dto.getLastModifiedDate())
@@ -64,6 +62,8 @@ public final class TestUtil {
                 .completed(todo.isCompleted())
                 .version(todo.getVersion())
                 .createdDate(todo.getCreatedDate())
+                .dateDebut(todo.getDateDebut())
+                .dateFin(todo.getDateFin())
                 .lastModifiedDate(todo.getLastModifiedDate())
                 .build();
     }
@@ -76,6 +76,8 @@ public final class TestUtil {
                 .completed(dto.isCompleted())
                 .version(dto.getVersion())
                 .createdDate(dto.getCreatedDate())
+                .dateDebut(dto.getDateDebut())
+                .dateFin(dto.getDateFin())
                 .lastModifiedDate(dto.getLastModifiedDate())
                 .build();
     }
