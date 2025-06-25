@@ -31,9 +31,6 @@ public final class Tag extends BaseEntity implements Serializable {
     @Column(unique = true)
     private String name;
 
-    @Size(min = SizeMapping.Description.MIN, max = SizeMapping.Description.MAX)
-    private String description;
-
     @ToString.Exclude
     @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
     @JsonIgnore

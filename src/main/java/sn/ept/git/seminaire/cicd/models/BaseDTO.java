@@ -5,6 +5,8 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import java.io.Serializable;
 import java.time.Instant;
+import java.time.LocalDateTime;
+
 @ToString
 @Getter
 @Setter
@@ -16,10 +18,10 @@ public class BaseDTO implements Serializable {
 
     private String id;
     @JsonProperty(value = "created_date")
-    private Instant createdDate ;
+    private LocalDateTime createdDate ;
 
     @JsonProperty(value = "last_modified_date")
-    private Instant lastModifiedDate;
+    private LocalDateTime lastModifiedDate;
     private int version;
 
 }

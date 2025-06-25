@@ -11,6 +11,8 @@ import jakarta.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 @ToString
 @Data
@@ -30,25 +32,25 @@ public abstract sealed class BaseEntity implements Serializable permits Tag, Tod
     @Builder.Default
     @CreatedDate
     @Column(name = "created_date", updatable = false)
-    private Instant createdDate = Instant.now();
+    private LocalDateTime createdDate =LocalDateTime.now(ZoneOffset.UTC) ;
 
     @Builder.Default
     @LastModifiedDate
     @Column(name = "last_modified_date")
-    private Instant lastModifiedDate = Instant.now();
+    private LocalDateTime lastModifiedDate=LocalDateTime.now(ZoneOffset.UTC);
 
     @Version
     private int version;
 
     @PrePersist
     void prePersit(){
-        this.setCreatedDate(Instant.now());
-        this.setLastModifiedDate(Instant.now());
+        this.setCreatedDate(LocalDateTime.now(ZoneOffset.UTC));
+        this.setLastModifiedDate(LocalDateTime.now(ZoneOffset.UTC));
     }
 
     @PreUpdate
     void preUpdate(){
-        this.setLastModifiedDate(Instant.now());
+        this.setLastModifiedDate(LocalDateTime.now(ZoneOffset.UTC));
     }
 
 }

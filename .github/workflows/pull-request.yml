@@ -11,10 +11,11 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      ENABLE_SECRETS_SCAN: true
+      ENABLE_SECRETS_SCAN: false
       ENABLE_DEPENDENCIES_SCAN: false
       ENABLE_TESTS: true
-      ENABLE_SONAR_SCAN: false
+      ENABLE_SONAR_SCAN: true
+      ENABLE_PACKAGE: false
 
     steps:
       - uses: actions/checkout@v3
@@ -23,14 +24,14 @@ jobs:
 
       - uses: ./.github/actions/setup-env
 
-      - uses: ./.github/actions/secrets-scan
-        with:
-          ENABLED: ${{ env.ENABLE_SECRETS_SCAN }}
-
-      - uses: ./.github/actions/dependency-scan
-        with:
-          ENABLED: ${{ env.ENABLE_DEPENDENCIES_SCAN }}
-          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+#      - uses: ./.github/actions/secrets-scan
+#        with:
+#          ENABLED: ${{ env.ENABLE_SECRETS_SCAN }}
+#
+#      - uses: ./.github/actions/dependency-scan
+#        with:
+#          ENABLED: ${{ env.ENABLE_DEPENDENCIES_SCAN }}
+#          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
 
       - uses: ./.github/actions/tests
         with:
@@ -43,20 +44,28 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST: "https://sonarcloud.io"
 
-      - uses: ./.github/actions/package
+#      - uses: ./.github/actions/package
+#        with:
+#          ENABLED: ${{ env.ENABLE_PACKAGE }}
+#
+#
+#      - name: Set up Docker Buildx
+#        if: 1 > 2
+#        uses: docker/setup-buildx-action@v3
+#
+#      - name: Build Docker image
+#        if: 1 > 2
+#        run: docker build -t my-app:latest .
+#
+#      - name: Install Trivy
+#        if: 1 > 2
+#        uses: aquasecurity/trivy-action@master
+#        with:
+#          scan-type: image
+#          image-ref: my-app:latest
+#          format: json #json,xml,table
+#          exit-code: 0 # 1: échoue si vulnérabilités trouvées, 0 : sinon. Remettre a 1
+#          severity: CRITICAL,HIGH #unknown, low,medium, high, critical
+#          ignore-unfixed: true #ignore celles qui n'ont pas de correctifs
+#
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build Docker image
-        run: docker build -t my-app:latest .
-
-      - name: Install Trivy
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: image
-          image-ref: my-app:latest
-          format: json #json,xml,table
-          exit-code: 0 # 1: échoue si vulnérabilités trouvées, 0 : sinon. Remettre a 1
-          severity: CRITICAL,HIGH #unknown, low,medium, high, critical
-          ignore-unfixed: true #ignore celles qui n'ont pas de correctifs

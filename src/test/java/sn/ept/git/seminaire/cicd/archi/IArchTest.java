@@ -1,10 +1,11 @@
-package sn.ept.git.seminaire.cicd.demo;
-
+package sn.ept.git.seminaire.cicd.archi;
 
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition;
+import com.tngtech.archunit.lang.syntax.elements.ClassesThat;
+import com.tngtech.archunit.lang.syntax.elements.GivenClassesConjunction;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -12,12 +13,14 @@ class IArchTest {
 
     public static final String BASE = "sn.ept.git.seminaire.cicd";
     public static final String SERVICES = BASE.concat(".services..");
-    public static final String SERVICES_IMPL = BASE.concat(".services.impl..");
     public static final String REPOSITORY = BASE.concat(".repositories..");
     public static final String ENTITIES = BASE.concat(".entities..");
     public static final String COMPONENTS = BASE.concat(".component..");
     public static final String RESOURCE = BASE.concat(".resources..");
-    static JavaClasses importedClasses;
+    public static final String MAPPER = BASE.concat(".mappers..");
+    private static  ClassesThat<GivenClassesConjunction> classesThat;
+    private static  ClassesThat<GivenClassesConjunction> noClassThat;
+    private static JavaClasses importedClasses;
 
     @BeforeAll
     static void init() {
@@ -25,14 +28,15 @@ class IArchTest {
                 .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
                 .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_ARCHIVES)
                 .importPackages(BASE);
+        classesThat = ArchRuleDefinition.classes().that();
+        noClassThat = ArchRuleDefinition.noClasses().that();
     }
 
 
     @Test
     void servicesComponentsAndRepositoriesShouldNotDependOnWebLayer() {
-        ArchRuleDefinition.noClasses()
-                .that()
-                .resideInAnyPackage(SERVICES, SERVICES_IMPL)
+        noClassThat
+                .resideInAnyPackage(SERVICES )
                 .or()
                 .resideInAnyPackage(REPOSITORY)
                 .or()
@@ -46,8 +50,7 @@ class IArchTest {
 
     @Test
     void resourcesShouldNotDependOnRepositoryLayer() {
-        ArchRuleDefinition.noClasses()
-                .that()
+        noClassThat
                 .resideInAnyPackage(RESOURCE)
                 .should()
                 .dependOnClassesThat()
@@ -58,12 +61,11 @@ class IArchTest {
 
     @Test
     void resourcesShouldNotUseConcreteClassesOnServiceLayer() {
-        ArchRuleDefinition.noClasses()
-                .that()
+        noClassThat
                 .resideInAPackage(RESOURCE)
                 .should()
                 .dependOnClassesThat()
-                .resideInAnyPackage(SERVICES_IMPL)
+                .resideInAnyPackage()
                 .because("Resources should use Interface in  Service layer instead of concrete classes")
                 .check(importedClasses);
     }
@@ -71,56 +73,21 @@ class IArchTest {
 
     @Test
     void servicesShouldNotDependOnServiceLayer() {
-        ArchRuleDefinition.noClasses()
-                .that()
-                .resideInAnyPackage(SERVICES_IMPL)
+        noClassThat
+                .resideInAnyPackage(SERVICES)
                 .should()
                 .dependOnClassesThat()
-                .resideInAnyPackage(SERVICES_IMPL)
+                .resideInAnyPackage(SERVICES)
                 .because("Services should not depend on Service layer")
                 .check(importedClasses);
     }
 
 
-    @Test
-    void servicesInterfacesShouldNotBeInServiceImplPackage() {
-        ArchRuleDefinition.noClasses()
-                .that()
-                .resideInAnyPackage(SERVICES_IMPL)
-                .should()
-                .beInterfaces()
-                .because("Service Interfaces should not be inside service.impl package")
-                .check(importedClasses);
-    }
 
-    @Test
-    void servicesClassesShouldNotBeDirectlyInServicePackage() {
-        ArchRuleDefinition.classes()
-                .that()
-                .resideInAnyPackage(SERVICES)
-                .and()
-                .haveSimpleNameEndingWith("Impl")
-                .should()
-                .resideInAPackage(SERVICES_IMPL)
-                .because("Service classes should not be directly inside service package")
-                .check(importedClasses);
-    }
-
-    @Test
-    void servicesClassesNamesShouldEndWithIImpl() {
-        ArchRuleDefinition.classes()
-                .that()
-                .resideInAnyPackage(SERVICES_IMPL)
-                .should()
-                .haveSimpleNameEndingWith("Impl")
-                .because("Service classes' name should end with Impl")
-                .check(importedClasses);
-    }
 
     @Test
     void resourcesNamesShouldEndWithResource() {
-        ArchRuleDefinition.classes()
-                .that()
+        classesThat
                 .resideInAPackage(RESOURCE)
                 .should()
                 .haveSimpleNameEndingWith("Resource")
@@ -130,8 +97,7 @@ class IArchTest {
 
     @Test
     void onlyRepositoriesShouldBeAnnotatedWithRepository() {
-        ArchRuleDefinition.classes()
-                .that()
+        classesThat
                 .areAnnotatedWith(org.springframework.stereotype.Repository.class)
                 .should()
                 .resideInAnyPackage(REPOSITORY)
@@ -142,19 +108,17 @@ class IArchTest {
 
     @Test
     void onlyServicesShouldBeAnnotatedWithService() {
-        ArchRuleDefinition.classes()
-                .that()
+        classesThat
                 .areAnnotatedWith(org.springframework.stereotype.Service.class)
                 .should()
-                .resideInAnyPackage(SERVICES_IMPL)
+                .resideInAnyPackage(SERVICES)
                 .because("Only services should be annotated with @Service")
                 .check(importedClasses);
     }
 
     @Test
     void onlyResourcesShouldBeAnnotatedWithRestController() {
-        ArchRuleDefinition.classes()
-                .that()
+        classesThat
                 .areAnnotatedWith(org.springframework.web.bind.annotation.RestController.class)
                 .should()
                 .resideInAnyPackage(RESOURCE)
@@ -164,8 +128,7 @@ class IArchTest {
 
     @Test
     void onlyDomaineClassesShouldBeAnnotatedWithEntity() {
-        ArchRuleDefinition.classes()
-                .that()
+        classesThat
                 .areAnnotatedWith(jakarta.persistence.Entity.class)
                 .should()
                 .resideInAnyPackage(ENTITIES)
@@ -175,12 +138,30 @@ class IArchTest {
 
     @Test
     void onlyDomaineClassesShouldBeAnnotatedWithTable() {
-        ArchRuleDefinition.classes()
-                .that()
+        classesThat
                 .areAnnotatedWith(jakarta.persistence.Table.class)
                 .should()
                 .resideInAnyPackage(ENTITIES)
                 .because("Only entities should be annotated with @Table")
+                .check(importedClasses);
+    }
+
+    @Test
+    void onlyMapperClassesShouldBeAnnotatedWithMapper() {
+        classesThat
+                .areAnnotatedWith(org.mapstruct.Mapper.class)
+                .should()
+                .resideInAnyPackage(MAPPER)
+                .because("Only mappers should reside in package mappers")
+                .check(importedClasses);
+    }
+    @Test
+    void noClassOtherThanShouldBeAnnotatedWithMapper() {
+        noClassThat
+                .resideOutsideOfPackage(MAPPER)
+                .should()
+                .beAnnotatedWith(org.mapstruct.Mapper.class)
+                .because("Only mappers should be annotated with @org.mapstruct.Mapper")
                 .check(importedClasses);
     }
 

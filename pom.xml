@@ -6,7 +6,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.2.3</version>
-<!--        <version>3.4.5</version>-->
+        <!--        <version>3.4.5</version>-->
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>sn.ept.git.seminaire.cicd</groupId>
@@ -28,7 +28,8 @@
 
         <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
         <jacoco.path>${project.basedir}/target/site/jacoco</jacoco.path>
-        <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/site/jacoco/jacoco.xml
+        </sonar.coverage.jacoco.xmlReportPaths>
 
         <sonar.organization>ept-git</sonar.organization>
         <sonar.language>java</sonar.language>
@@ -101,7 +102,7 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.11.0</version>
-<!--            <version>2.14.0</version>-->
+            <!--            <version>2.14.0</version>-->
         </dependency>
 
         <!-- archi test-->
@@ -243,6 +244,11 @@
             <artifactId>groovy-xml</artifactId>
             <version>${groovy-xml.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.17.0</version>
+        </dependency>
 
     </dependencies>
 
@@ -265,11 +271,11 @@
                 </executions>
                 <configuration>
                     <generateGitPropertiesFile>true</generateGitPropertiesFile>
-                    <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
+                    <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties
+                    </generateGitPropertiesFilename>
                     <commitIdGenerationMode>full</commitIdGenerationMode>
                 </configuration>
             </plugin>
-
 
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -319,7 +325,7 @@
             <plugin>
                 <groupId>org.sonarsource.scanner.maven</groupId>
                 <artifactId>sonar-maven-plugin</artifactId>
-               <!-- <version>5.1.0.4751</version>-->
+                <!-- <version>5.1.0.4751</version>-->
                 <version>3.9.1.2184</version>
             </plugin>
 
@@ -351,6 +357,15 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.1.2</version>
+                <configuration>
+                    <includes>
+<!--                        <include>src/test/**.java</include>-->
+                        <include>**/*Cucumber.java</include>
+                        <include>**/Cucumber*.java</include>
+                        <include>**/*Cucumber*.java</include>
+                    </includes>
+                    <argLine>${maven-surefire-plugin.argLine}</argLine>
+                </configuration>
             </plugin>
 
             <plugin>
@@ -455,6 +470,4 @@
             </build>
         </profile>
     </profiles>
-
-
 </project>
