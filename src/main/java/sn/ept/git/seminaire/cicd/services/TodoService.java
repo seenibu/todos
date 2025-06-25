@@ -94,10 +94,4 @@ public class TodoService {
         return mapper.toDTO(repository.saveAndFlush(todo));
     }
 
-    public Page<TodoDTO> findByDates(Pageable pageable, LocalDateTime debut, LocalDateTime fin) {
-        log.info(LogUtils.LOG_START, CLASS_NAME, "findByDates[Pageable]");
-        return repository
-                .findByDates(pageable, debut,fin)
-                .map(mapper::toDTO);
-    }
 }

@@ -172,23 +172,4 @@ class TodoServiceTest {
         );
     }
 
-    @Test
-    void findByDates_shouldReturnResult() {
-        Mockito.when(todoRepository.findByDates(Mockito.any(Pageable.class),Mockito.any(),Mockito.any()))
-                .thenReturn(
-                        new PageImpl<>(
-                                List.of(todo),
-                                PageRequest.of(page, size),
-                                1
-                        )
-                );
-        LocalDateTime debut = LocalDateTime.now();
-        LocalDateTime fin = debut.plusMonths(3);
-        final Page<TodoDTO> all = service.findByDates(PageRequest.of(page, size),debut, fin);
-        assertThat(all)
-                .isNotNull()
-                .isNotEmpty()
-                .hasSize(1);
-    }
-
 }

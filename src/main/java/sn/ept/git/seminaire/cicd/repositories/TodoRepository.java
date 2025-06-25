@@ -13,7 +13,4 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
-public interface TodoRepository extends JpaRepository<Todo, String> {
-    @Query("select t from Todo  t where t.dateDebut>=:debut and t.dateFin<=:fin")
-    Page<Todo> findByDates(Pageable pageable, @Param("debut") LocalDateTime debut, @Param("fin") LocalDateTime fin);
-}
+public interface TodoRepository extends JpaRepository<Todo, String> {}
