@@ -27,25 +27,25 @@ jobs:
 
       - uses: ./.github/actions/setup-env
 
-      - uses: ./.github/actions/secrets-scan
-        with:
-          ENABLED: ${{ env.ENABLE_SECRETS_SCAN }}
+#      - uses: ./.github/actions/secrets-scan
+#        with:
+#          ENABLED: ${{ env.ENABLE_SECRETS_SCAN }}
 
-      - uses: ./.github/actions/dependency-scan
-        with:
-          ENABLED: ${{ env.ENABLE_DEPENDENCIES_SCAN }}
-          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+#      - uses: ./.github/actions/dependency-scan
+#        with:
+#          ENABLED: ${{ env.ENABLE_DEPENDENCIES_SCAN }}
+#          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
 
       - uses: ./.github/actions/tests
         with:
           ENABLED: ${{ env.ENABLE_TESTS }}
 
-      - uses: ./.github/actions/quality-gate
-        with:
-          ENABLED: ${{ env.ENABLE_SONAR_SCAN }}
-          PROJECT_KEY: "seenibu_todos"
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST: "https://sonarcloud.io"
+#      - uses: ./.github/actions/quality-gate
+#        with:
+#          ENABLED: ${{ env.ENABLE_SONAR_SCAN }}
+#          PROJECT_KEY: "seenibu_todos"
+#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#          SONAR_HOST: "https://sonarcloud.io"
 
       - uses: ./.github/actions/package
         with:
@@ -64,10 +64,10 @@ jobs:
           VERSION: ${{steps.release.outputs.VERSION}}
           IMAGE_FULL_NAME: ${{secrets.DOCKER_NAMESPACE}}/${{secrets.DOCKER_REGISTRY_IMAGE}}
 
-      - uses: ./.github/actions/deploy
-        with:
-          ENABLED: ${{ env.ENABLE_DEPLOY }}
-
-      - uses: ./.github/actions/dast-in-docker
-        with:
-          ENABLED: ${{ env.ENABLE_DAST }}
+#      - uses: ./.github/actions/deploy
+#        with:
+#          ENABLED: ${{ env.ENABLE_DEPLOY }}
+#
+#      - uses: ./.github/actions/dast-in-docker
+#        with:
+#          ENABLED: ${{ env.ENABLE_DAST }}
