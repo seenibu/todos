@@ -22,7 +22,6 @@ import sn.ept.git.seminaire.cicd.mappers.TodoMapper;
 import sn.ept.git.seminaire.cicd.entities.Todo;
 import sn.ept.git.seminaire.cicd.repositories.TodoRepository;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
