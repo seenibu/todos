@@ -86,7 +86,7 @@ public class TodoService {
         log.info(LogUtils.LOG_START, CLASS_NAME, "complete");
         final Optional<Todo> optional = repository.findById(uuid);
         ExceptionUtils.presentOrThrow(optional, ItemNotFoundException.TODO_BY_ID, uuid);
-        //todo dates chaeck
+        //todo dates check
         final Todo todo = optional.get();
         todo.setCompleted(true);
         return mapper.toDTO(repository.saveAndFlush(todo));
