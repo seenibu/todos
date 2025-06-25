@@ -63,8 +63,7 @@ class TodoResourceTest {
         Mockito.when(service.findAll(Mockito.any(Pageable.class)))
                 .thenReturn(
                         new PageImpl<>(
-                                List.of(
-                                        dto),
+                                List.of(dto),
                                 PageRequest.of(page, size),
                                 1
                         )

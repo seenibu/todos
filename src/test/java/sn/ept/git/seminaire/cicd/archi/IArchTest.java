@@ -1,4 +1,4 @@
-package sn.ept.git.seminaire.cicd.demo;
+package sn.ept.git.seminaire.cicd.archi;
 
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;

@@ -10,13 +10,13 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-     ENABLE_SECRETS_SCAN: false
+     ENABLE_SECRETS_SCAN: true
      ENABLE_DEPENDENCIES_SCAN: false
      ENABLE_TESTS: true
-     ENABLE_SONAR_SCAN: false
-     ENABLE_PACKAGE: false
-     ENABLE_RELEASE: false
-     ENABLE_DOCKERIZATION: false
+     ENABLE_SONAR_SCAN: true
+     ENABLE_PACKAGE: true
+     ENABLE_RELEASE: true
+     ENABLE_DOCKERIZATION: true
      ENABLE_DEPLOY: false
      ENABLE_DAST: false
 
