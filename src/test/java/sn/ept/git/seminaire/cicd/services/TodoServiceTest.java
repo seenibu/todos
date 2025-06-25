@@ -22,6 +22,7 @@ import sn.ept.git.seminaire.cicd.mappers.TodoMapper;
 import sn.ept.git.seminaire.cicd.entities.Todo;
 import sn.ept.git.seminaire.cicd.repositories.TodoRepository;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -169,6 +170,25 @@ class TodoServiceTest {
                 ItemNotFoundException.class,
                 () -> service.complete(dto.getId())
         );
+    }
+
+    @Test
+    void findByDates_shouldReturnResult() {
+        Mockito.when(todoRepository.findByDates(Mockito.any(Pageable.class),Mockito.any(),Mockito.any()))
+                .thenReturn(
+                        new PageImpl<>(
+                                List.of(todo),
+                                PageRequest.of(page, size),
+                                1
+                        )
+                );
+        LocalDateTime debut = LocalDateTime.now();
+        LocalDateTime fin = debut.plusMonths(3);
+        final Page<TodoDTO> all = service.findByDates(PageRequest.of(page, size),debut, fin);
+        assertThat(all)
+                .isNotNull()
+                .isNotEmpty()
+                .hasSize(1);
     }
 
 }
