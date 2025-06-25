@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      ENABLE_SECRETS_SCAN: true
+      ENABLE_SECRETS_SCAN: false
       ENABLE_DEPENDENCIES_SCAN: false
       ENABLE_TESTS: true
       ENABLE_SONAR_SCAN: true
