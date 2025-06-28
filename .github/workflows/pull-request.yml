@@ -4,6 +4,7 @@ on:
     branches:
       - 'DIC1-*'
       - 'IS-*'
+      - 'TEST-*'
 
 jobs:
   build:
