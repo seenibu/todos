@@ -1,0 +1,5 @@
+
+DELETE http://localhost:8080/cicd/api/todos/6c64a202-8c0a-416f-ac7d-786938a652f9
+Content-Type: application/json
+
+

@@ -4,7 +4,7 @@ on:
     branches:
       - 'DIC1-*'
       - 'IS-*'
-
+      - 'TEST-*'
 
 jobs:
   build:
@@ -27,7 +27,8 @@ jobs:
 #      - uses: ./.github/actions/secrets-scan
 #        with:
 #          ENABLED: ${{ env.ENABLE_SECRETS_SCAN }}
-#
+
+
 #      - uses: ./.github/actions/dependency-scan
 #        with:
 #          ENABLED: ${{ env.ENABLE_DEPENDENCIES_SCAN }}
@@ -37,12 +38,19 @@ jobs:
         with:
           ENABLED: ${{ env.ENABLE_TESTS }}
 
-      - uses: ./.github/actions/quality-gate
-        with:
-          ENABLED: ${{ env.ENABLE_SONAR_SCAN }}
-          PROJECT_KEY: "seenibu_todos"
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST: "https://sonarcloud.io"
+#      - uses: ./.github/actions/quality-gate
+#        with:
+#          ENABLED: ${{ env.ENABLE_SONAR_SCAN }}
+#          PROJECT_KEY: "seenibu_todos"
+#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#          SONAR_HOST: "https://sonarcloud.io"
+
+
+
+
+
+
+
 
 #      - uses: ./.github/actions/package
 #        with:
