@@ -1,0 +1,12 @@
+
+PUT http://localhost:8080/cicd/api/todos/6c64a202-8c0a-416f-ac7d-786938a652f9
+Content-Type: application/json
+
+{
+  "title":"Read book '{{$random.book.title}}'",
+  "description":"Start reading this book",
+  "date_debut":"2025-08-12T16:06:45",
+  "date_fin":"2025-08-22T16:06:48"
+}
+
+
