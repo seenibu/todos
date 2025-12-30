@@ -12,7 +12,14 @@ on:
           - dev
           - staging
           - prod
-
+          
+      test_input:
+        description: "Test environment v2"
+        required: true
+        type: choice
+        options: [dev, staging, prod]
+        default: staging
+        
       app_version:
         description: "Application version"
         required: true
@@ -44,12 +51,12 @@ jobs:
         run: |
           echo "Deploying to <${{ github.event.inputs.environment}}> with version <${{ github.event.inputs.app_version }}>"
           
-      - name : Deploy staging - ${{ github.event.inputs.app_version }}
+      - name : "Deploy staging - ${{ github.event.inputs.app_version }}"
         if: ${{ github.event.inputs.environment == 'staging' }}
         run: |
           echo "Deploying to <${{ github.event.inputs.environment}}> with version <${{ github.event.inputs.app_version }}>"
           
-      - name : Deploy prod - ${{ github.event.inputs.app_version }}
+      - name : "Deploy prod - ${{ github.event.inputs.app_version }}"
         if: ${{ github.event.inputs.environment == 'prod' }}
         run: |
           echo "Deploying to <${{ github.event.inputs.environment}}> with version <${{ github.event.inputs.app_version }}>"
