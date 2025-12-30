@@ -1,0 +1,49 @@
+name: Cloud Deployment Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      cloud_provider:
+        description: "Choose cloud provider"
+        required: true
+        type: choice
+        options:
+          - azure
+          - aws
+          - gcp
+
+      environment:
+        description: "Target environment"
+        required: true
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
+
+      app_version:
+        description: "Application version"
+        required: true
+        default: "1.0.0"
+        type: string
+
+      run_tests:
+        description: "Run tests before deployment?"
+        required: false
+        default: true
+        type: boolean
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Display input values
+        run: |
+          echo "Cloud Provider : ${{ github.event.inputs.cloud_provider }}"
+          echo "Environment    : ${{ github.event.inputs.environment }}"
+          echo "App Version    : ${{ github.event.inputs.app_version }}"
+          echo "Run Tests      : ${{ github.event.inputs.run_tests }}"
