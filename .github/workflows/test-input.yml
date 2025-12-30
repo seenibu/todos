@@ -3,14 +3,6 @@ name: Cloud Deployment Workflow
 on:
   workflow_dispatch:
     inputs:
-      cloud_provider:
-        description: "Choose cloud provider"
-        required: true
-        type: choice
-        options:
-          - azure
-          - aws
-          - gcp
 
       environment:
         description: "Target environment"
@@ -43,7 +35,22 @@ jobs:
 
       - name: Display input values
         run: |
-          echo "Cloud Provider : ${{ github.event.inputs.cloud_provider }}"
-          echo "Environment    : ${{ github.event.inputs.environment }}"
-          echo "App Version    : ${{ github.event.inputs.app_version }}"
-          echo "Run Tests      : ${{ github.event.inputs.run_tests }}"
+          echo "Environment : ${{ github.event.inputs.environment }}"
+          echo "App Version : ${{ github.event.inputs.app_version }}"
+          echo "Run Tests   : ${{ github.event.inputs.run_tests }}"
+          
+      - name : Deploy dev
+        if: ${{ github.event.inputs.environment == 'dev' }}
+        run: |
+          echo "Deploying to <${{ github.event.inputs.environment}}> with version <${{ github.event.inputs.app_version }}>"
+          
+      - name : Deploy staging
+        if: ${{ github.event.inputs.environment == 'staging' }}
+        run: |
+          echo "Deploying to <${{ github.event.inputs.environment}}> with version <${{ github.event.inputs.app_version }}>"
+          
+      - name : Deploy prod
+        if: ${{ github.event.inputs.environment == 'prod' }}
+        run: |
+          echo "Deploying to <${{ github.event.inputs.environment}}> with version <${{ github.event.inputs.app_version }}>"
+          
