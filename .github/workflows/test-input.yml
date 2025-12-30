@@ -12,7 +12,8 @@ on:
           - dev
           - staging
           - prod
-          
+        default: dev
+        
       test_input:
         description: "Test environment v2"
         required: true
