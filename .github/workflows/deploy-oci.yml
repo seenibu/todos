@@ -1,0 +1,39 @@
+name: Deploy OCI 
+
+on:
+  workflow_dispatch:
+    inputs:
+        
+      app_version:
+        description: "Chose a version"
+        required: true
+        type: choice
+        options: [latest, 1.4, 1.3, 1.2, 1.1]
+        default: staging
+      
+
+      run_tests:
+        description: "Run tests before deployment ?"
+        required: false
+        default: true
+        type: boolean
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Display input values
+        run: |
+          echo "App Version : ${{ github.event.inputs.app_version }}"
+          echo "Run Tests   : ${{ github.event.inputs.run_tests }}"
+          
+      - name : "Run test - ${{ github.event.inputs.run_tests }}"
+        if: ${{ github.event.inputs.run_tests == 'true' }}
+        run: |
+          echo "Running test"
+          mvn clean test
+          
